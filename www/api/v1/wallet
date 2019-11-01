@@ -1,0 +1,6 @@
+{
+    "requiresPaymentMethod": false,
+    "balance": 0,
+    "credit_card": null,
+    "currency": "EUR"
+}
