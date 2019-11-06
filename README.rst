@@ -54,4 +54,5 @@ See also
 ========
 
 - https://gitlab.com/devirich/BrewyaOnOuya
-
+- https://archive.org/details/ouyalibrary
+- https://github.com/cweiske/ouya-game-data/
