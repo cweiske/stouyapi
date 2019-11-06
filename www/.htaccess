@@ -1,0 +1,5 @@
+RewriteEngine on
+
+#rewrite details GET parameter
+RewriteCond %{QUERY_STRING} ^app=([^&]+)
+RewriteRule ^api/v1/details /api/v1/details-data/%1.json?
