@@ -17,7 +17,7 @@ OUYA config change
 - Add::
 
     OUYA_SERVER_URL=http://stouyapi.boo
-    OUYA_STATUS_SERVER_URL=http://stouyapi.boo
+    OUYA_STATUS_SERVER_URL=http://stouyapi.boo/api/v1/status
 
 Notes:
 

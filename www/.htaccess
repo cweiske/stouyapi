@@ -3,3 +3,12 @@ RewriteEngine on
 #rewrite details GET parameter
 RewriteCond %{QUERY_STRING} ^app=([^&]+)
 RewriteRule ^api/v1/details /api/v1/details-data/%1.json?
+
+RewriteRule ^api/v1/apps/(.*)/download$ /api/v1/apps/$1-download.json? [END]
+RewriteRule ^api/v1/apps/(.*)$ /api/v1/apps/$1.json? [END]
+
+RewriteRule ^api/v1/discover/?$ /api/v1/discover.json [END]
+RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
+
+#this one wants a 204 status code
+RewriteRule ^api/v1/status$ - [R=204,NC,L]

@@ -24,21 +24,33 @@ foreach ($gameFiles as $gameFile) {
         error('JSON invalid at ' . $gameFile);
     }
     addMissingGameProperties($game);
-    //FIXME: add missing properties?
     $games[$game->package] = $game;
-    writeJson(
-        'api/v1/apps/' . $game->package,
-        buildApps($game)
-    );
+
     writeJson(
         'api/v1/details-data/' . $game->package . '.json',
         buildDetails($game)
     );
-    //exit(2);
     
+    writeJson(
+        'api/v1/apps/' . $game->package . '.json',
+        buildApps($game)
+    );
+    $latestRelease = getLatestRelease($game);
+    writeJson(
+        'api/v1/apps/' . $latestRelease->uuid . '.json',
+        buildApps($game)
+    );
+
+    writeJson(
+        'api/v1/apps/' . $latestRelease->uuid . '-download.json',
+        buildAppDownload($game, $latestRelease)
+    );
+    //exit(2);
+
 }
 
-//FIXME: build discover section
+writeJson('api/v1/discover.json', buildDiscover($games));
+writeJson('api/v1/discover-data/home.json', buildDiscoverHome($games));
 
 /**
  * Build api/v1/apps/$package
@@ -46,7 +58,7 @@ foreach ($gameFiles as $gameFile) {
 function buildApps($game)
 {
     $latestRelease = getLatestRelease($game);
-    
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-apps-xxx
     return [
         'app' => [
@@ -56,12 +68,12 @@ function buildApps($game)
             'description'   => $game->description,
             'gamerNumbers'  => $game->players,
             'genres'        => $game->genres,
-            
+
             'website'       => $game->website,
             'contentRating' => $game->contentRating,
             'premium'       => $game->premium,
             'firstPublishedAt' => $game->firstPublishedAt,
-            
+
             'likeCount'     => $game->rating->likeCount,
             'ratingAverage' => $game->rating->average,
             'ratingCount'   => $game->rating->count,
@@ -86,6 +98,18 @@ function buildApps($game)
 
             'promotedProduct' => null,
         ],
+    ];
+}
+
+function buildAppDownload($game, $release)
+{
+    return [
+        'app' => [
+            'fileSize'      => $release->size,
+            'version'       => $release->uuid,
+            'contentRating' => $game->contentRating,
+            'downloadLink'  => $release->url,
+        ]
     ];
 }
 
@@ -123,7 +147,7 @@ function buildDetails($game)
             'fp_url' => $screenshot,
         ];
     }
-    
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
     return [
         'type'             => 'Game',
@@ -179,9 +203,85 @@ function buildDetails($game)
         'heroImage'     => [
             'url' => null,
         ],
-        
+
         'promotedProduct' => null,
-    ];             
+    ];
+}
+
+function buildDiscover(array $games)
+{
+    $data = [
+        'title' => 'DISCOVER',
+        'rows'  => [],
+        'tiles' => [],
+    ];
+    $tileMap = [];
+
+    $rowAll = [
+        'title'     => 'ALL GAMES',
+        'showPrice' => false,
+        'ranked'    => false,
+        'tiles'     => [],
+    ];
+    foreach ($games as $game) {
+        $tilePos = count($tileMap);
+        $data['tiles'][$tilePos] = buildDiscoverGameTile($game);
+        $tileMap[$game->package] = $tilePos;
+
+        $rowAll['tiles'][] = $tilePos;
+    }
+    $data['rows'][] = $rowAll;
+
+    return $data;
+}
+
+function buildDiscoverHome(array $games)
+{
+    //we do not want anything here for now
+    $data = [
+        'title' => 'home',
+        'rows'  => [
+            [
+                'title' => 'FEATURED',
+                'showPrice' => false,
+                'ranked'    => false,
+                'tiles'     => [],
+            ]
+        ],
+        'tiles' => [],
+    ];
+    return $data;
+}
+
+function buildDiscoverGameTile($game)
+{
+    $latestRelease = getLatestRelease($game);
+    return [
+        'gamerNumbers' => $game->players,
+        'genres' => $game->genres,
+        'url' => 'ouya://launcher/details?app=' . $game->package,
+        'latestVersion' => [
+            'apk' => [
+                'md5sum' => $latestRelease->md5sum,
+            ],
+            'versionNumber' => $latestRelease->name,
+            'uuid' => $latestRelease->uuid,
+        ],
+        'inAppPurchases' => $game->inAppPurchases,
+        'promotedProduct' => null,
+        'premium' => $game->premium,
+        'type' => 'app',
+        'package' => $game->package,
+        'updated_at' => strtotime($latestRelease->date),
+        'updatedAt' => $latestRelease->date,
+        'title' => $game->title,
+        'image' => $game->media->discover,
+        'contentRating' => $game->contentRating,
+        'rating' => [
+            'count' => $game->rating->count,
+            'average' => $game->rating->average,
+        ],
+    ];
 }
 
 function addMissingGameProperties($game)
@@ -210,7 +310,7 @@ function addMissingGameProperties($game)
     if (!isset($game->firstPublishedAt)) {
         $game->firstPublishedAt = gmdate('c');
     }
-    
+
     if (!isset($game->rating)) {
         $game->rating = new stdClass();
     }
