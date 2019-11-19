@@ -33,6 +33,14 @@ OUYA setup
 3. Skip credit card registration
 
 
+Apache setup
+============
+Virtual host configuration::
+
+  Script PUT /empty-json.php
+
+``mod_actions`` need to be enabled for apache 2.4.
+
 
 ===========
 Information
