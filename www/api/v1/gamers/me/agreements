@@ -1,1 +1,6 @@
-{}
+{
+  "marketplace_required_version": 2,
+  "marketplace": 2,
+  "privacy_required_version": 0,
+  "privacy": 0
+}

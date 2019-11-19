@@ -1,4 +1,21 @@
 {
-  "result": [
-  ]
+    "result": [        
+        {
+            "incremental": false,
+            "filename": "OUYA-1.2.1427-r1.zip",
+            "timestamp": "1418407476",
+            "md5sum": "3a95be82b4c33bd68353dc314346f39f",
+            "channel": "stable",
+            "url": "http://ouya.cweiske.de/firmware/RC-OUYA-1.2.1427-r1_ota.zip",
+            "requiredUpto": "1.2.995",
+            "changes": null,
+            "changesLocalized": {
+                "de": "no info",
+                "it": "no info",
+                "fr": "no info",
+                "es": "no info",
+                "en": "no info"
+            }
+        }
+    ]
 }
