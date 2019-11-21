@@ -6,36 +6,65 @@
  * @link https://github.com/cweiske/ouya-game-data/
  * @author Christian Weiske <cweiske@cweiske.de>
  */
+ini_set('xdebug.halt_level', E_WARNING|E_NOTICE|E_USER_WARNING|E_USER_NOTICE);
+require_once __DIR__ . '/filters.php';
 if (!isset($argv[1])) {
-    error('Pass the path to a directory with game data json files');
+    error('Pass the path to a "folders" file with game data json files folder names');
 }
-$gameDataDir = $argv[1];
-if (!is_dir($gameDataDir)) {
-    error('Given path is not a directory: ' . $gameDataDir);
+$foldersFile = $argv[1];
+if (!is_file($foldersFile)) {
+    error('Given path is not a file: ' . $foldersFile);
 }
+
+$GLOBALS['packagelists']['cweiskepicks'] = [
+    'de.eiswuxe.blookid2',
+    'com.cosmos.babyloniantwins'
+];
 
 $wwwDir = __DIR__ . '/../www/';
 
-$gameFiles = glob($gameDataDir . '/*.json');
+$baseDir   = dirname($foldersFile);
+$gameFiles = [];
+foreach (file($foldersFile) as $line) {
+    $line = trim($line);
+    if (strlen($line)) {
+        if (strpos($line, '..') !== false) {
+            error('Path attack in ' . $folder);
+        }
+        $folder = $baseDir . '/' . $line;
+        if (!is_dir($folder)) {
+            error('Folder does not exist: ' . $folder);
+        }
+        $gameFiles = array_merge($gameFiles, glob($folder . '/*.json'));
+    }
+}
+
 $games = [];
+$count = 0;
 foreach ($gameFiles as $gameFile) {
     $game = json_decode(file_get_contents($gameFile));
     if ($game === null) {
         error('JSON invalid at ' . $gameFile);
     }
     addMissingGameProperties($game);
-    $games[$game->package] = $game;
+    $games[$game->packageName] = $game;
 
     writeJson(
-        'api/v1/details-data/' . $game->package . '.json',
+        'api/v1/details-data/' . $game->packageName . '.json',
         buildDetails($game)
     );
+    /* this crashes babylonian twins
+    writeJson(
+        'api/v1/games/' . $game->packageName . '/purchases',
+        "{}\n"
+    );
+    */
     
     writeJson(
-        'api/v1/apps/' . $game->package . '.json',
+        'api/v1/apps/' . $game->packageName . '.json',
         buildApps($game)
     );
-    $latestRelease = getLatestRelease($game);
+    $latestRelease = $game->latestRelease;
     writeJson(
         'api/v1/apps/' . $latestRelease->uuid . '.json',
         buildApps($game)
@@ -45,24 +74,135 @@ foreach ($gameFiles as $gameFile) {
         'api/v1/apps/' . $latestRelease->uuid . '-download.json',
         buildAppDownload($game, $latestRelease)
     );
-    //exit(2);
 
+    if ($count++ > 20) {
+        //break;
+    }
 }
 
 writeJson('api/v1/discover.json', buildDiscover($games));
 writeJson('api/v1/discover-data/home.json', buildDiscoverHome($games));
 
+
+function buildDiscover(array $games)
+{
+    $data = [
+        'title' => 'DISCOVER',
+        'rows'  => [],
+        'tiles' => [],
+    ];
+
+    addDiscoverRow(
+        $data, 'Last Updated',
+        filterLastUpdated($games, 10)
+    );
+    addDiscoverRow(
+        $data, 'Best rated',
+        filterBestRated($games, 10)
+    );
+    addDiscoverRow(
+        $data, "cweiske's picks",
+        filterByPackageNames($games, $GLOBALS['packagelists']['cweiskepicks'])
+    );
+    
+    $players = [
+        1 => '1 player',
+        2 => '2 players',
+        3 => '3 players',
+        4 => '4 players',
+    ];
+    addDiscoverRow($data, '# of players', $players);
+    foreach ($players as $num => $title) {
+        writeJson(
+            'api/v1/discover-data/' . categoryPath($title) . '.json',
+            buildDiscoverCategory($title, filterByPlayers($games, $num))
+        );
+    }
+
+    $genres = getAllGenres($games);
+    sort($genres);
+    $genreChunks = array_chunk($genres, 4);
+    $first = true;
+    foreach ($genreChunks as $chunk) {
+        addDiscoverRow(
+            $data, $first ? 'Genres' : '',
+            $chunk
+        );
+        $first = false;
+    }
+
+    foreach ($genres as $genre) {
+        writeJson(
+            'api/v1/discover-data/' . categoryPath($genre) . '.json',
+            buildDiscoverCategory($genre, filterByGenre($games, $genre))
+        );
+    }
+
+    return $data;
+}
+
 /**
- * Build api/v1/apps/$package
+ * A genre category page
+ */
+function buildDiscoverCategory($name, $games)
+{
+    $data = [
+        'title' => $name,
+        'rows'  => [],
+        'tiles' => [],
+    ];
+    addDiscoverRow(
+        $data, 'Last Updated',
+        filterLastUpdated($games, 10)
+    );
+    addDiscoverRow(
+        $data, 'Best rated',
+        filterBestRated($games, 10)
+    );
+
+    usort(
+        $games,
+        function ($gameA, $gameB) {
+            return strcmp($gameB->title, $gameA->title);
+        }
+    );
+    $chunks = array_chunk($games, 4);
+    foreach ($chunks as $chunkGames) {
+        addDiscoverRow($data, '', $chunkGames);
+    }
+
+    return $data;
+}
+
+function buildDiscoverHome(array $games)
+{
+    //we do not want anything here for now
+    $data = [
+        'title' => 'home',
+        'rows'  => [
+            [
+                'title' => 'FEATURED',
+                'showPrice' => false,
+                'ranked'    => false,
+                'tiles'     => [],
+            ]
+        ],
+        'tiles' => [],
+    ];
+    return $data;
+}
+
+/**
+ * Build api/v1/apps/$packageName
  */
 function buildApps($game)
 {
-    $latestRelease = getLatestRelease($game);
+    $latestRelease = $game->latestRelease;
 
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-apps-xxx
     return [
         'app' => [
-            'uuid'          => $game->uuid,
+            'uuid'          => $latestRelease->uuid,
             'title'         => $game->title,
             'overview'      => $game->overview,
             'description'   => $game->description,
@@ -86,7 +226,7 @@ function buildApps($game)
             'publicSize'    => $latestRelease->publicSize,
             'nativeSize'    => $latestRelease->nativeSize,
 
-            'mainImageFullUrl' => $game->media->large,
+            'mainImageFullUrl' => $game->media->discover,
             'videoUrl'         => $game->media->video,
             'filepickerScreenshots' => $game->media->screenshots,
             'mobileAppIcon'    => null,
@@ -118,17 +258,17 @@ function buildAppDownload($game, $release)
  */
 function buildDetails($game)
 {
-    $latestRelease = getLatestRelease($game);
+    $latestRelease = $game->latestRelease;
 
     $mediaTiles = [];
-    if ($game->media->large) {
+    if ($game->media->discover) {
         $mediaTiles[] = [
             'type' => 'image',
             'urls' => [
-                'thumbnail' => $game->media->large,
-                'full'      => $game->media->large,
+                'thumbnail' => $game->media->discover,
+                'full'      => $game->media->discover,
             ],
-            'fp_url' => $game->media->large,
+            'fp_url' => $game->media->discover,
         ];
     }
     if ($game->media->video) {
@@ -174,7 +314,7 @@ function buildDetails($game)
             'md5sum'      => $latestRelease->md5sum,
             'filename'    => 'FIXME',
             'errors'      => '',
-            'package'     => $game->package,
+            'package'     => $game->packageName,
             'versionCode' => $latestRelease->versionCode,
             'state'       => 'complete',
         ],
@@ -208,58 +348,60 @@ function buildDetails($game)
     ];
 }
 
-function buildDiscover(array $games)
+function addDiscoverRow(&$data, $title, $games)
 {
-    $data = [
-        'title' => 'DISCOVER',
-        'rows'  => [],
-        'tiles' => [],
-    ];
-    $tileMap = [];
-
-    $rowAll = [
-        'title'     => 'ALL GAMES',
+    $row = [
+        'title'     => $title,
         'showPrice' => false,
         'ranked'    => false,
         'tiles'     => [],
     ];
     foreach ($games as $game) {
-        $tilePos = count($tileMap);
-        $data['tiles'][$tilePos] = buildDiscoverGameTile($game);
-        $tileMap[$game->package] = $tilePos;
+        if (is_string($game)) {
+            //category link
+            $tilePos = count($data['tiles']);
+            $data['tiles'][$tilePos] = buildDiscoverCategoryTile($game);
 
-        $rowAll['tiles'][] = $tilePos;
+        } else {
+            //game
+            $tilePos = findTile($data['tiles'], $game->packageName);
+            if ($tilePos === null) {
+                $tilePos = count($data['tiles']);
+                $data['tiles'][$tilePos] = buildDiscoverGameTile($game);
+            }
+        }
+        $row['tiles'][] = $tilePos;
     }
-    $data['rows'][] = $rowAll;
-
-    return $data;
+    $data['rows'][] = $row;
 }
 
-function buildDiscoverHome(array $games)
+function findTile($tiles, $packageName)
 {
-    //we do not want anything here for now
-    $data = [
-        'title' => 'home',
-        'rows'  => [
-            [
-                'title' => 'FEATURED',
-                'showPrice' => false,
-                'ranked'    => false,
-                'tiles'     => [],
-            ]
-        ],
-        'tiles' => [],
+    foreach ($tiles as $pos => $tile) {
+        if ($tile['package'] == $packageName) {
+            return $pos;
+        }
+    }
+    return null;
+}
+
+function buildDiscoverCategoryTile($title)
+{
+    return [
+        'url'   => 'ouya://launcher/discover/' . categoryPath($title),
+        'image' => '',
+        'title' => $title,
+        'type'  => 'discover'
     ];
-    return $data;
 }
 
 function buildDiscoverGameTile($game)
 {
-    $latestRelease = getLatestRelease($game);
+    $latestRelease = $game->latestRelease;
     return [
         'gamerNumbers' => $game->players,
         'genres' => $game->genres,
-        'url' => 'ouya://launcher/details?app=' . $game->package,
+        'url' => 'ouya://launcher/details?app=' . $game->packageName,
         'latestVersion' => [
             'apk' => [
                 'md5sum' => $latestRelease->md5sum,
@@ -271,7 +413,7 @@ function buildDiscoverGameTile($game)
         'promotedProduct' => null,
         'premium' => $game->premium,
         'type' => 'app',
-        'package' => $game->package,
+        'package' => $game->packageName,
         'updated_at' => strtotime($latestRelease->date),
         'updatedAt' => $latestRelease->date,
         'title' => $game->title,
@@ -282,6 +424,20 @@ function buildDiscoverGameTile($game)
             'average' => $game->rating->average,
         ],
     ];
+}
+
+function categoryPath($title)
+{
+    return str_replace(['/', '\\', ' '], '_', $title);
+}
+
+function getAllGenres($games)
+{
+    $genres = [];
+    foreach ($games as $game) {
+        $genres = array_merge($genres, $game->genres);
+    }
+    return array_unique($genres);
 }
 
 function addMissingGameProperties($game)
@@ -324,6 +480,8 @@ function addMissingGameProperties($game)
         $game->rating->count = 0;
     }
 
+    $game->latestRelease = null;
+    $latestReleaseTimestamp = 0;
     foreach ($game->releases as $release) {
         if (!isset($release->publicSize)) {
             $release->publicSize = 0;
@@ -331,6 +489,15 @@ function addMissingGameProperties($game)
         if (!isset($release->nativeSize)) {
             $release->nativeSize = 0;
         }
+
+        $releaseTimestamp = strtotime($release->date);
+        if ($releaseTimestamp > $latestReleaseTimestamp) {
+            $game->latestRelease    = $release;
+            $latestReleaseTimestamp = $releaseTimestamp;
+        }
+    }
+    if ($game->latestRelease === null) {
+        error('No latest release for ' . $game->packageName);
     }
 
     if (!isset($game->media->video)) {
@@ -354,21 +521,6 @@ function addMissingGameProperties($game)
     if (!isset($game->developer->founder)) {
         $game->developer->founder = false;
     }
-}
-
-function getLatestRelease($game)
-{
-    $latestRelease = null;
-    foreach ($game->releases as $release) {
-        if ($release->latest ?? false) {
-            $latestRelease = $release;
-            break;
-        }
-    }
-    if ($latestRelease === null) {
-        error('No latest release for ' . $game->package);
-    }
-    return $latestRelease;
 }
 
 function writeJson($path, $data)
