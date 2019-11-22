@@ -19,10 +19,8 @@ OUYA config change
     OUYA_SERVER_URL=http://stouyapi.boo
     OUYA_STATUS_SERVER_URL=http://stouyapi.boo/api/v1/status
 
-Notes:
-
-- "important note, don't put trailing slash into OUYA_SERVER_URL, it will make double slashes"
-- I had to reboot to make that change in the file active
+The changes should take effect immediately.
+If they do not, reboot the OUYA once.
 
 
 OUYA setup
@@ -41,26 +39,34 @@ Virtual host configuration::
 
 ``mod_actions`` need to be enabled for apache 2.4.
 
+The virtual host's document root needs to point to the ``www`` folder.
 
-===========
-Information
-===========
-By default, OUYA uses HTTPS to devs.ouya.tv.
-(status.ouya.tv is HTTP only, no SSL)
-DNS mapping does not work, except when creating an own SSL certificate
-and registering the root CA at the OUYA itself.
 
-IPv6 used -> custom domain needs IPv6 DNS entry
+Building API data
+=================
+Download the OUYA game data repository from
+https://github.com/ouya-saviors/ouya-game-data
+and then generate the API files with it::
 
-https://rabid.ouya.tv/ - was OUYA's sandbox instance
+    $ git clone https://github.com/ouya-saviors/ouya-game-data.git
+    $ ./bin/import-game-data.php ouya-game-data/folders
 
-DEBUG=1
-DEBUG_SPAM=1
 
 ========
 See also
 ========
 
-- https://gitlab.com/devirich/BrewyaOnOuya
-- https://archive.org/details/ouyalibrary
-- https://github.com/cweiske/ouya-game-data/
+- https://gitlab.com/devirich/BrewyaOnOuya - alternative storefront
+- https://archive.org/details/ouyalibrary - Archived OUYA games
+- https://github.com/ouya-saviors/ouya-game-data/ - OUYA game data repository
+
+
+===========
+Discoveries
+===========
+
+- data/data/tv.ouya/cache/ion/
+
+  - image cache for main menu image
+
+- Don't put a trailing slash into ``OUYA_SERVER_URL`` - it will make double slashes
