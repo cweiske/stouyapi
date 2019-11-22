@@ -80,7 +80,7 @@ foreach ($gameFiles as $gameFile) {
     }
 }
 
-writeJson('api/v1/discover.json', buildDiscover($games));
+writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
 writeJson('api/v1/discover-data/home.json', buildDiscoverHome($games));
 
 
