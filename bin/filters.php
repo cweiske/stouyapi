@@ -1,9 +1,35 @@
 <?php
+function filterByAge($origGames, $age)
+{
+    $filtered = [];
+    foreach ($origGames as $game) {
+        if ($age == $game->contentRating) {
+            $filtered[] = $game;
+        }
+    }
+    return $filtered;
+}
+
 function filterByGenre($origGames, $genre)
 {
     $filtered = [];
     foreach ($origGames as $game) {
         if (array_search($genre, $game->genres) !== false) {
+            $filtered[] = $game;
+        }
+    }
+    return $filtered;
+}
+
+function filterByLetter($origGames, $letter)
+{
+    $filtered = [];
+    foreach ($origGames as $game) {
+        $gameLetter = strtoupper($game->title{0});
+        if (!preg_match('#^[A-Z]$#', $gameLetter)) {
+            $gameLetter = 'Other';
+        }
+        if ($letter == $gameLetter) {
             $filtered[] = $game;
         }
     }

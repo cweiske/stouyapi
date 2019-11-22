@@ -106,7 +106,7 @@ function buildDiscover(array $games)
     );
     
     $players = [
-        1 => '1 player',
+        //1 => '1 player',
         2 => '2 players',
         3 => '3 players',
         4 => '4 players',
@@ -119,22 +119,33 @@ function buildDiscover(array $games)
         );
     }
 
+    $ages = getAllAges($games);
+    natsort($ages);
+    addDiscoverRow($data, 'Content rating', $ages);
+    foreach ($ages as $num => $title) {
+        writeJson(
+            'api/v1/discover-data/' . categoryPath($title) . '.json',
+            buildDiscoverCategory($title, filterByAge($games, $title))
+        );
+    }
+
     $genres = getAllGenres($games);
     sort($genres);
-    $genreChunks = array_chunk($genres, 4);
-    $first = true;
-    foreach ($genreChunks as $chunk) {
-        addDiscoverRow(
-            $data, $first ? 'Genres' : '',
-            $chunk
-        );
-        $first = false;
-    }
+    addChunkedDiscoverRows($data, $genres, 'Genres');
 
     foreach ($genres as $genre) {
         writeJson(
             'api/v1/discover-data/' . categoryPath($genre) . '.json',
             buildDiscoverCategory($genre, filterByGenre($games, $genre))
+        );
+    }
+
+    $abc = array_merge(range('A', 'Z'), ['Other']);
+    addChunkedDiscoverRows($data, $abc, 'Alphabetical');
+    foreach ($abc as $letter) {
+        writeJson(
+            'api/v1/discover-data/' . categoryPath($letter) . '.json',
+            buildDiscoverCategory($letter, filterByLetter($games, $letter))
         );
     }
 
@@ -348,6 +359,19 @@ function buildDetails($game)
     ];
 }
 
+function addChunkedDiscoverRows(&$data, $games, $title)
+{
+    $chunks = array_chunk($games, 4);
+    $first = true;
+    foreach ($chunks as $chunk) {
+        addDiscoverRow(
+            $data, $first ? $title : '',
+            $chunk
+        );
+        $first = false;
+    }
+}
+
 function addDiscoverRow(&$data, $title, $games)
 {
     $row = [
@@ -428,7 +452,16 @@ function buildDiscoverGameTile($game)
 
 function categoryPath($title)
 {
-    return str_replace(['/', '\\', ' '], '_', $title);
+    return str_replace(['/', '\\', ' ', '+'], '_', $title);
+}
+
+function getAllAges($games)
+{
+    $ages = [];
+    foreach ($games as $game) {
+        $ages[] = $game->contentRating;
+    }
+    return array_unique($ages);
 }
 
 function getAllGenres($games)
