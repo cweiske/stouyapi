@@ -174,7 +174,7 @@ function buildDiscoverCategory($name, $games)
     usort(
         $games,
         function ($gameA, $gameB) {
-            return strcmp($gameB->title, $gameA->title);
+            return strcmp($gameA->title, $gameB->title);
         }
     );
     $chunks = array_chunk($games, 4);
