@@ -1,0 +1,2 @@
+DirectoryIndex index.html
+ErrorDocument 404 /api/v1/details-dummy/error-unknown-app-details.json
