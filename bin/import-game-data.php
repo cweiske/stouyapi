@@ -293,9 +293,7 @@ function buildDetails($game)
         } else {
             $mediaTiles[] = [
                 'type' => 'video',
-                'urls' => [
-                    'full'      => $medium->url,
-                ],
+                'url'  => $medium->url,
             ];
         }
     }
