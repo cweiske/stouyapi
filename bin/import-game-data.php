@@ -298,6 +298,15 @@ function buildDetails($game)
         }
     }
 
+    $buttons = [];
+    if (isset($game->links->unlocked)) {
+        $buttons[] = [
+            'text' => 'Show unlocked',
+            'url'  => 'ouya://launcher/details?app=' . $game->links->unlocked,
+            'bold' => true,
+        ];
+    }
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
     return [
         'type'             => 'Game',
@@ -355,6 +364,7 @@ function buildDetails($game)
         ],
 
         'promotedProduct' => null,
+        'buttons'         => $buttons,
     ];
 }
 
@@ -387,6 +397,11 @@ function addDiscoverRow(&$data, $title, $games)
 
         } else {
             //game
+            if (isset($game->links->original)) {
+                //do not link unlocked games.
+                // people an access them via the original games
+                continue;
+            }
             $tilePos = findTile($data['tiles'], $game->packageName);
             if ($tilePos === null) {
                 $tilePos = count($data['tiles']);
