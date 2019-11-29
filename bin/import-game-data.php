@@ -566,7 +566,7 @@ function writeJson($path, $data)
     }
     file_put_contents(
         $fullPath,
-        json_encode($data, JSON_PRETTY_PRINT) . "\n"
+        json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
     );
 }
 
