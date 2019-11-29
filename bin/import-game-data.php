@@ -59,7 +59,7 @@ foreach ($gameFiles as $gameFile) {
         "{}\n"
     );
     */
-    
+
     writeJson(
         'api/v1/apps/' . $game->packageName . '.json',
         buildApps($game)
@@ -104,7 +104,7 @@ function buildDiscover(array $games)
         $data, "cweiske's picks",
         filterByPackageNames($games, $GLOBALS['packagelists']['cweiskepicks'])
     );
-    
+
     $players = [
         //1 => '1 player',
         2 => '2 players',
@@ -237,9 +237,9 @@ function buildApps($game)
             'publicSize'    => $latestRelease->publicSize,
             'nativeSize'    => $latestRelease->nativeSize,
 
-            'mainImageFullUrl' => $game->media->discover,
-            'videoUrl'         => $game->media->video,
-            'filepickerScreenshots' => $game->media->screenshots,
+            'mainImageFullUrl' => $game->discover,
+            'videoUrl'         => getFirstVideoUrl($game->media),
+            'filepickerScreenshots' => getAllImageUrls($game->media),
             'mobileAppIcon'    => null,
 
             'developer'           => $game->developer->name,
@@ -272,31 +272,32 @@ function buildDetails($game)
     $latestRelease = $game->latestRelease;
 
     $mediaTiles = [];
-    if ($game->media->discover) {
+    if ($game->discover) {
         $mediaTiles[] = [
             'type' => 'image',
             'urls' => [
-                'thumbnail' => $game->media->discover,
-                'full'      => $game->media->discover,
+                'thumbnail' => $game->discover,
+                'full'      => $game->discover,
             ],
-            'fp_url' => $game->media->discover,
         ];
     }
-    if ($game->media->video) {
-        $mediaTiles[] = [
-            'type' => 'video',
-            'url'  => $game->media->video,
-        ];
-    }
-    foreach ($game->media->screenshots as $screenshot) {
-        $mediaTiles[] = [
-            'type' => 'image',
-            'urls' => [
-                'thumbnail' => $screenshot,
-                'full'      => $screenshot,
-            ],
-            'fp_url' => $screenshot,
-        ];
+    foreach ($game->media as $medium) {
+        if ($medium->type == 'image')  {
+            $mediaTiles[] = [
+                'type' => 'image',
+                'urls' => [
+                    'thumbnail' => $medium->thumb,
+                    'full'      => $medium->url,
+                ],
+            ];
+        } else {
+            $mediaTiles[] = [
+                'type' => 'video',
+                'urls' => [
+                    'full'      => $medium->url,
+                ],
+            ];
+        }
     }
 
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
@@ -348,7 +349,7 @@ function buildDetails($game)
             number_format($latestRelease->size / 1024 / 1024, 2, '.', '') . ' MiB',
         ],
 
-        'tileImage'     => $game->media->discover,
+        'tileImage'     => $game->discover,
         'mediaTiles'    => $mediaTiles,
         'mobileAppIcon' => null,
         'heroImage'     => [
@@ -441,7 +442,7 @@ function buildDiscoverGameTile($game)
         'updated_at' => strtotime($latestRelease->date),
         'updatedAt' => $latestRelease->date,
         'title' => $game->title,
-        'image' => $game->media->discover,
+        'image' => $game->discover,
         'contentRating' => $game->contentRating,
         'rating' => [
             'count' => $game->rating->count,
@@ -533,12 +534,10 @@ function addMissingGameProperties($game)
         error('No latest release for ' . $game->packageName);
     }
 
-    if (!isset($game->media->video)) {
-        $game->media->video = null;
+    if (!isset($game->media)) {
+        $game->media = [];
     }
-    if (!isset($game->media->screenshots)) {
-        $game->media->screenshots = [];
-    }
+
     if (!isset($game->developer->uuid)) {
         $game->developer->uuid = null;
     }
@@ -554,6 +553,27 @@ function addMissingGameProperties($game)
     if (!isset($game->developer->founder)) {
         $game->developer->founder = false;
     }
+}
+
+function getFirstVideoUrl($media)
+{
+    foreach ($media as $medium) {
+        if ($medium->type == 'video') {
+            return $medium->url;
+        }
+    }
+    return null;
+}
+
+function getAllImageUrls($media)
+{
+    $imageUrls = [];
+    foreach ($media as $medium) {
+        if ($medium->type == 'image') {
+            $imageUrls[] = $medium->url;
+        }
+    }
+    return $imageUrls;
 }
 
 function writeJson($path, $data)
