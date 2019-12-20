@@ -1,6 +1,6 @@
 {
     "requiresPaymentMethod": false,
-    "balance": 0,
+    "balance": 42.23,
     "credit_card": null,
     "currency": "EUR"
 }
