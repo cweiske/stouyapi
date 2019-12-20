@@ -210,6 +210,21 @@ function buildApps($game)
 {
     $latestRelease = $game->latestRelease;
 
+    $product      = null;
+    $gamePromoted = getPromotedProduct($game);
+    if ($gamePromoted) {
+        $product = [
+            'type'          => 'entitlement',
+            'identifier'    => $gamePromoted->identifier,
+            'name'          => $gamePromoted->name,
+            'description'   => $gamePromoted->description ?? '',
+            'localPrice'    => $gamePromoted->localPrice,
+            'originalPrice' => $gamePromoted->originalPrice,
+            'percentOff'    => 0,
+            'currency'      => $gamePromoted->currency,
+        ];
+    }
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-apps-xxx
     return [
         'app' => [
@@ -247,7 +262,7 @@ function buildApps($game)
             'supportPhone'        => $game->developer->supportPhone,
             'founder'             => $game->developer->founder,
 
-            'promotedProduct' => null,
+            'promotedProduct' => $product,
         ],
     ];
 }
@@ -307,6 +322,21 @@ function buildDetails($game)
         ];
     }
 
+    $product      = null;
+    $gamePromoted = getPromotedProduct($game);
+    if ($gamePromoted) {
+        $product = [
+            'type'          => 'entitlement',
+            'identifier'    => $gamePromoted->identifier,
+            'name'          => $gamePromoted->name,
+            'description'   => $gamePromoted->description ?? '',
+            'localPrice'    => $gamePromoted->localPrice,
+            'originalPrice' => $gamePromoted->originalPrice,
+            'percentOff'    => 0,
+            'currency'      => $gamePromoted->currency,
+        ];
+    }
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
     return [
         'type'             => 'Game',
@@ -363,7 +393,7 @@ function buildDetails($game)
             'url' => null,
         ],
 
-        'promotedProduct' => null,
+        'promotedProduct' => $product,
         'buttons'         => $buttons,
     ];
 }
@@ -587,6 +617,19 @@ function getAllImageUrls($media)
         }
     }
     return $imageUrls;
+}
+
+function getPromotedProduct($game)
+{
+    if (!isset($game->products) || !count($game->products)) {
+        return null;
+    }
+    foreach ($game->products as $gameProd) {
+        if ($gameProd->promoted) {
+            return $gameProd;
+        }
+    }
+    return null;
 }
 
 function writeJson($path, $data)
