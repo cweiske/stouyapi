@@ -514,7 +514,7 @@ function addDiscoverRow(&$data, $title, $games)
 {
     $row = [
         'title'     => $title,
-        'showPrice' => false,
+        'showPrice' => true,
         'ranked'    => false,
         'tiles'     => [],
     ];
