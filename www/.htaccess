@@ -11,8 +11,16 @@ RewriteRule ^api/v1/details /api/v1/details-dummy/404? [END]
 RewriteRule ^api/v1/apps/(.*)/download$ /api/v1/apps/$1-download.json? [END]
 RewriteRule ^api/v1/apps/(.*)$ /api/v1/apps/$1.json? [END]
 
+#rewrite developer products "only" GET parameter
+RewriteCond %{QUERY_STRING} &only=([^&]+)
+RewriteRule ^api/v1/developers/(.+)/products/ /api/v1/developers/$1/products/%1.json? [END]
+
 RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
 RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
+
+#purchased games/products
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^api/v1/games/(.+)/purchases?$ /api/v1/games/purchases-empty.json [END]
 
 #this one wants a 204 status code
 RewriteRule ^api/v1/status$ - [R=204,L]

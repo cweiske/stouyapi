@@ -41,6 +41,7 @@ foreach (file($foldersFile) as $line) {
 
 $games = [];
 $count = 0;
+$developers = [];
 foreach ($gameFiles as $gameFile) {
     $game = json_decode(file_get_contents($gameFile));
     if ($game === null) {
@@ -53,6 +54,31 @@ foreach ($gameFiles as $gameFile) {
         'api/v1/details-data/' . $game->packageName . '.json',
         buildDetails($game)
     );
+
+    if (!isset($developers[$game->developer->uuid])) {
+        $developers[$game->developer->uuid] = [
+            'info'     => $game->developer,
+            'products' => [],
+        ];
+    }
+
+    $products = $game->products ?? [];
+    foreach ($products as $product) {
+        writeJson(
+            'api/v1/developers/' . $game->developer->uuid
+            . '/products/' . $product->identifier . '.json',
+            buildDeveloperProductOnly($product, $game->developer)
+        );
+        $developers[$game->developer->uuid]['products'][] = $product;
+    }
+
+    /**/
+    writeJson(
+        'api/v1/games/' . $game->packageName . '/purchases',
+        buildPurchases($game)
+    );
+    /**/
+
     /* this crashes babylonian twins
     writeJson(
         'api/v1/games/' . $game->packageName . '/purchases',
@@ -78,6 +104,15 @@ foreach ($gameFiles as $gameFile) {
     if ($count++ > 20) {
         //break;
     }
+}
+
+foreach ($developers as $developer) {
+    writeJson(
+        //index.htm does not need a rewrite rule
+        'api/v1/developers/' . $developer['info']->uuid
+        . '/products/index.htm',
+        buildDeveloperProducts($developer['products'], $developer['info'])
+    );
 }
 
 writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
@@ -213,16 +248,7 @@ function buildApps($game)
     $product      = null;
     $gamePromoted = getPromotedProduct($game);
     if ($gamePromoted) {
-        $product = [
-            'type'          => 'entitlement',
-            'identifier'    => $gamePromoted->identifier,
-            'name'          => $gamePromoted->name,
-            'description'   => $gamePromoted->description ?? '',
-            'localPrice'    => $gamePromoted->localPrice,
-            'originalPrice' => $gamePromoted->originalPrice,
-            'percentOff'    => 0,
-            'currency'      => $gamePromoted->currency,
-        ];
+        $product = buildProduct($gamePromoted);
     }
 
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-apps-xxx
@@ -279,6 +305,23 @@ function buildAppDownload($game, $release)
     ];
 }
 
+function buildProduct($product)
+{
+    if ($product === null) {
+        return null;
+    }
+    return [
+        'type'          => 'entitlement',
+        'identifier'    => $product->identifier,
+        'name'          => $product->name,
+        'description'   => $product->description ?? '',
+        'localPrice'    => $product->localPrice,
+        'originalPrice' => $product->originalPrice,
+        'percentOff'    => 0,
+        'currency'      => $product->currency,
+    ];
+}
+
 /**
  * Build /app/v1/details?app=org.example.game
  */
@@ -325,16 +368,7 @@ function buildDetails($game)
     $product      = null;
     $gamePromoted = getPromotedProduct($game);
     if ($gamePromoted) {
-        $product = [
-            'type'          => 'entitlement',
-            'identifier'    => $gamePromoted->identifier,
-            'name'          => $gamePromoted->name,
-            'description'   => $gamePromoted->description ?? '',
-            'localPrice'    => $gamePromoted->localPrice,
-            'originalPrice' => $gamePromoted->originalPrice,
-            'percentOff'    => 0,
-            'currency'      => $gamePromoted->currency,
-        ];
+        $product = buildProduct($gamePromoted);
     }
 
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
@@ -395,6 +429,71 @@ function buildDetails($game)
 
         'promotedProduct' => $product,
         'buttons'         => $buttons,
+    ];
+}
+
+/**
+ * For /api/v1/developers/xxx/products/?only=yyy
+ */
+function buildDeveloperProductOnly($product, $developer)
+{
+    return [
+        'developerName' => $developer->name,
+        'currency'      => $product->currency,
+        'products'      => [
+            buildProduct($product),
+        ],
+    ];
+}
+
+/**
+ * For /api/v1/developers/xxx/products/
+ */
+function buildDeveloperProducts($products, $developer)
+{
+    $jsonProducts = [];
+    foreach ($products as $product) {
+        $jsonProducts[] = buildProduct($product);
+    }
+    return [
+        'developerName' => $developer->name,
+        'currency'      => $products[0]->currency ?? 'EUR',
+        'products'      => $jsonProducts,
+    ];
+}
+
+function buildPurchases($game)
+{
+    $purchasesData = [
+        'purchases' => [],
+    ];
+    $promotedProduct = getPromotedProduct($game);
+    if ($promotedProduct) {
+        $purchasesData['purchases'][] = [
+            'purchaseDate' => time() * 1000,
+            'generateDate' => time() * 1000,
+            'identifier'   => $promotedProduct->identifier,
+            'gamer'        => 'stouyapi',
+            'uuid'         => '00702342-0000-1111-2222-c3e1500cafe2',//gamer uuid
+            'priceInCents' => $promotedProduct->originalPrice * 100,
+            'localPrice'   => $promotedProduct->localPrice,
+            'currency'     => $promotedProduct->currency,
+        ];
+    }
+
+    $encryptedOnce  = dummyEncrypt($purchasesData);
+    $encryptedTwice = dummyEncrypt($encryptedOnce);
+    return $encryptedTwice;
+}
+
+function dummyEncrypt($data)
+{
+    return [
+        'key'  => base64_encode('0123456789abcdef') . "\n",
+        'iv'   => 't3jir1LHpICunvhlM76edQ==' . "\n",//random bytes
+        'blob' => base64_encode(
+            json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+        ) . "\n",
     ];
 }
 
@@ -491,6 +590,7 @@ function buildDiscoverGameTile($game)
             'count' => $game->rating->count,
             'average' => $game->rating->average,
         ],
+        'promotedProduct' => buildProduct(getPromotedProduct($game)),
     ];
 }
 

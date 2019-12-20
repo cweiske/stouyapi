@@ -1,5 +1,7 @@
 /README.html
 www/api/v1/apps/
 www/api/v1/details-data/
+www/api/v1/developers/
 www/api/v1/discover-data/
 www/api/v1/discover.json
+www/api/v1/games/*/
