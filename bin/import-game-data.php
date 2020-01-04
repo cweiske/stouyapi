@@ -113,6 +113,12 @@ foreach ($developers as $developer) {
         . '/products/index.htm',
         buildDeveloperProducts($developer['products'], $developer['info'])
     );
+    writeJson(
+        //index.htm does not need a rewrite rule
+        'api/v1/developers/' . $developer['info']->uuid
+        . '/current_gamer',
+        buildDeveloperCurrentGamer()
+    );
 }
 
 writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
@@ -429,6 +435,16 @@ function buildDetails($game)
 
         'promotedProduct' => $product,
         'buttons'         => $buttons,
+    ];
+}
+
+function buildDeveloperCurrentGamer()
+{
+    return [
+        'gamer' => [
+            'uuid'     => '00702342-0000-1111-2222-c3e1500cafe2',
+            'username' => 'stouyapi',
+        ],
     ];
 }
 
