@@ -124,6 +124,13 @@ foreach ($developers as $developer) {
 writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
 writeJson('api/v1/discover-data/home.json', buildDiscoverHome($games));
 
+//make
+writeJson(
+    'api/v1/discover-data/tutorials.json',
+    buildMakeCategory('Tutorials', filterByGenre($games, 'Tutorials'))
+);
+
+
 
 function buildDiscover(array $games)
 {
@@ -170,7 +177,7 @@ function buildDiscover(array $games)
         );
     }
 
-    $genres = getAllGenres($games);
+    $genres = removeMakeGenres(getAllGenres($games));
     sort($genres);
     addChunkedDiscoverRows($data, $genres, 'Genres');
 
@@ -222,6 +229,25 @@ function buildDiscoverCategory($name, $games)
     foreach ($chunks as $chunkGames) {
         addDiscoverRow($data, '', $chunkGames);
     }
+
+    return $data;
+}
+
+function buildMakeCategory($name, $games)
+{
+    $data = [
+        'title' => $name,
+        'rows'  => [],
+        'tiles' => [],
+    ];
+
+    usort(
+        $games,
+        function ($gameA, $gameB) {
+            return strcasecmp($gameA->title, $gameB->title);
+        }
+    );
+    addDiscoverRow($data, '', $games);
 
     return $data;
 }
@@ -746,6 +772,17 @@ function getPromotedProduct($game)
         }
     }
     return null;
+}
+
+function removeMakeGenres($genres)
+{
+    $filtered = [];
+    foreach ($genres as $genre) {
+        if ($genre != 'Tutorials' && $genre != 'Builds') {
+            $filtered[] = $genre;
+        }
+    }
+    return $filtered;
 }
 
 function writeJson($path, $data)
