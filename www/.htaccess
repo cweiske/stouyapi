@@ -22,5 +22,15 @@ RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^api/v1/games/(.+)/purchases?$ /api/v1/games/purchases-empty.json [END]
 
+#search
+# q is first parameter
+RewriteCond %{QUERY_STRING} ^q=([^&]+)
+RewriteCond %{DOCUMENT_ROOT}/api/v1/search-data/%1.json -f
+RewriteRule ^api/v1/search /api/v1/search-data/%1.json? [END]
+# q is not the first parameter
+RewriteCond %{QUERY_STRING} &q=([^&]+)
+RewriteCond %{DOCUMENT_ROOT}/api/v1/search-data/%1.json -f
+RewriteRule ^api/v1/search /api/v1/search-data/%1.json? [END]
+
 #this one wants a 204 status code
 RewriteRule ^api/v1/status$ - [R=204,L]

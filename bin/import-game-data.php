@@ -124,6 +124,14 @@ writeJson(
     buildMakeCategory('Tutorials', filterByGenre($games, 'Tutorials'))
 );
 
+$searchLetters = 'abcdefghijklmnopqrstuvwxyz0123456789., ';
+foreach (str_split($searchLetters) as $letter) {
+    $letterGames = filterBySearchWord($games, $letter);
+    writeJson(
+        'api/v1/search-data/' . $letter . '.json',
+        buildSearch($letterGames)
+    );
+}
 
 
 function buildDiscover(array $games)
@@ -214,12 +222,7 @@ function buildDiscoverCategory($name, $games)
         filterBestRated($games, 10)
     );
 
-    usort(
-        $games,
-        function ($gameA, $gameB) {
-            return strcasecmp($gameA->title, $gameB->title);
-        }
-    );
+    $games = sortByTitle($games);
     $chunks = array_chunk($games, 4);
     foreach ($chunks as $chunkGames) {
         addDiscoverRow($data, '', $chunkGames);
@@ -236,12 +239,7 @@ function buildMakeCategory($name, $games)
         'tiles' => [],
     ];
 
-    usort(
-        $games,
-        function ($gameA, $gameB) {
-            return strcasecmp($gameA->title, $gameB->title);
-        }
-    );
+    $games = sortByTitle($games);
     addDiscoverRow($data, '', $games);
 
     return $data;
@@ -521,6 +519,23 @@ function buildPurchases($game)
     $encryptedOnce  = dummyEncrypt($purchasesData);
     $encryptedTwice = dummyEncrypt($encryptedOnce);
     return $encryptedTwice;
+}
+
+function buildSearch($games)
+{
+    $games = sortByTitle($games);
+    $results = [];
+    foreach ($games as $game) {
+        $results[] = [
+            'title' => $game->title,
+            'url'   => 'ouya://launcher/details?app=' . $game->packageName,
+            'contentRating' => $game->contentRating,
+        ];
+    }
+    return [
+        'count'   => count($results),
+        'results' => $results,
+    ];
 }
 
 function dummyEncrypt($data)

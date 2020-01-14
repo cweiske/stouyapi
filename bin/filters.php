@@ -65,6 +65,17 @@ function filterByPlayers($origGames, $numOfPlayers)
     return $filtered;
 }
 
+function filterBySearchWord($origGames, $searchWord)
+{
+    $filtered = [];
+    foreach ($origGames as $game) {
+        if (stripos($game->title, $searchWord) !== false) {
+            $filtered[] = $game;
+        }
+    }
+    return $filtered;
+}
+
 function filterLastUpdated($origGames, $limit)
 {
     $games = array_values($origGames);
@@ -89,5 +100,16 @@ function filterBestRated($origGames, $limit)
     );
 
     return array_slice($games, 0, $limit);
+}
+
+function sortByTitle($games)
+{
+    usort(
+        $games,
+        function ($gameA, $gameB) {
+            return strcasecmp($gameA->title, $gameB->title);
+        }
+    );
+    return $games;
 }
 ?>
