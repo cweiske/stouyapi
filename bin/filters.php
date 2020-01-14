@@ -84,7 +84,7 @@ function filterBestRated($origGames, $limit)
     usort(
         $games,
         function ($gameA, $gameB) {
-            return $gameB->rating->average - $gameA->rating->average;
+            return ($gameB->rating->rank - $gameA->rating->rank) * 100;
         }
     );
 

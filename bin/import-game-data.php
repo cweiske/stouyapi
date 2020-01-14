@@ -98,6 +98,8 @@ foreach ($gameFiles as $gameFile) {
     }
 }
 
+calculateRank($games);
+
 foreach ($developers as $developer) {
     writeJson(
         //index.htm does not need a rewrite rule
@@ -730,6 +732,29 @@ function addMissingGameProperties($game)
     }
     if (!isset($game->developer->founder)) {
         $game->developer->founder = false;
+    }
+}
+
+/**
+ * Implements a sensible ranking system described in
+ * https://stackoverflow.com/a/1411268/2826013
+ */
+function calculateRank(array $games)
+{
+    $averageRatings = array_map(
+        function ($game) {
+            return $game->rating->average;
+        },
+        $games
+    );
+    $average = array_sum($averageRatings) / count($averageRatings);
+    $C = $average;
+    $m = 500;
+
+    foreach ($games as $game) {
+        $R = $game->rating->average;
+        $v = $game->rating->count;
+        $game->rating->rank = ($R * $v + $C * $m) / ($v + $m);
     }
 }
 
