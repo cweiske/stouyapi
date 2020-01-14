@@ -77,14 +77,6 @@ foreach ($gameFiles as $gameFile) {
         'api/v1/games/' . $game->packageName . '/purchases',
         buildPurchases($game)
     );
-    /**/
-
-    /* this crashes babylonian twins
-    writeJson(
-        'api/v1/games/' . $game->packageName . '/purchases',
-        "{}\n"
-    );
-    */
 
     writeJson(
         'api/v1/apps/' . $game->packageName . '.json',
@@ -134,6 +126,7 @@ writeJson(
 
 function buildDiscover(array $games)
 {
+    $games = removeMakeGames($games);
     $data = [
         'title' => 'DISCOVER',
         'rows'  => [],
@@ -772,6 +765,11 @@ function getPromotedProduct($game)
         }
     }
     return null;
+}
+
+function removeMakeGames(array $games)
+{
+    return filterByGenre($games, 'Tutorials', true);
 }
 
 function removeMakeGenres($genres)

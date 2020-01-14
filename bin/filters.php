@@ -10,12 +10,18 @@ function filterByAge($origGames, $age)
     return $filtered;
 }
 
-function filterByGenre($origGames, $genre)
+function filterByGenre($origGames, $genre, $remove = false)
 {
     $filtered = [];
     foreach ($origGames as $game) {
-        if (array_search($genre, $game->genres) !== false) {
-            $filtered[] = $game;
+        if ($remove) {
+            if (array_search($genre, $game->genres) === false) {
+                $filtered[] = $game;
+            }
+        } else {
+            if (array_search($genre, $game->genres) !== false) {
+                $filtered[] = $game;
+            }
         }
     }
     return $filtered;
