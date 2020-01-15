@@ -509,8 +509,8 @@ function buildPurchases($game)
             'purchaseDate' => time() * 1000,
             'generateDate' => time() * 1000,
             'identifier'   => $promotedProduct->identifier,
-            'gamer'        => 'stouyapi',
-            'uuid'         => '00702342-0000-1111-2222-c3e1500cafe2',//gamer uuid
+            'gamer'        => '00702342-0000-1111-2222-c3e1500cafe2',//gamer uuid
+            'uuid'         => '00702342-0000-1111-2222-c3e1500beef3',//transaction ID
             'priceInCents' => $promotedProduct->originalPrice * 100,
             'localPrice'   => $promotedProduct->localPrice,
             'currency'     => $promotedProduct->currency,
