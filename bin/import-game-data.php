@@ -18,7 +18,8 @@ if (!is_file($foldersFile)) {
 
 $GLOBALS['packagelists']['cweiskepicks'] = [
     'de.eiswuxe.blookid2',
-    'com.cosmos.babyloniantwins'
+    'com.cosmos.babyloniantwins',
+    'com.inverseblue.skyriders',
 ];
 
 $wwwDir = __DIR__ . '/../www/';
