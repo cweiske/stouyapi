@@ -13,6 +13,7 @@ RewriteRule ^api/v1/apps/(.*)$ /api/v1/apps/$1.json? [END]
 
 #rewrite developer products "only" GET parameter
 RewriteCond %{QUERY_STRING} &only=([^&]+)
+RewriteCond %{DOCUMENT_ROOT}/api/v1/developers/$1/products/%1.json -f
 RewriteRule ^api/v1/developers/(.+)/products/ /api/v1/developers/$1/products/%1.json? [END]
 
 RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
