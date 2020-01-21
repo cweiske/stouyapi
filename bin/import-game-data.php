@@ -157,13 +157,37 @@ function buildDiscover(array $games)
         filterByPackageNames($games, $GLOBALS['packagelists']['cweiskepicks'])
     );
 
+    addDiscoverRow(
+        $data, 'Special',
+        [
+            'Best rated',
+            'Most rated',
+            'Random',
+        ]
+    );
+    writeJson(
+        'api/v1/discover-data/' . categoryPath('Best rated') . '.json',
+        buildSpecialCategory('Best rated', filterBestRated($games, 99))
+    );
+    writeJson(
+        'api/v1/discover-data/' . categoryPath('Most rated') . '.json',
+        buildSpecialCategory('Most rated', filterMostDownloaded($games, 99))
+    );
+    writeJson(
+        'api/v1/discover-data/' . categoryPath('Random') . '.json',
+        buildSpecialCategory(
+            'Random' . date('Y-m-d H:i'),
+            filterRandom($games, 99)
+        )
+    );
+
     $players = [
         //1 => '1 player',
         2 => '2 players',
         3 => '3 players',
         4 => '4 players',
     ];
-    addDiscoverRow($data, '# of players', $players);
+    addDiscoverRow($data, 'Multiplayer', $players);
     foreach ($players as $num => $title) {
         writeJson(
             'api/v1/discover-data/' . categoryPath($title) . '.json',
@@ -242,6 +266,25 @@ function buildMakeCategory($name, $games)
 
     $games = sortByTitle($games);
     addDiscoverRow($data, '', $games);
+
+    return $data;
+}
+
+function buildSpecialCategory($name, $games)
+{
+    $data = [
+        'title' => $name,
+        'rows'  => [],
+        'tiles' => [],
+    ];
+
+    $first3 = array_slice($games, 0, 3);
+    $chunks = array_chunk(array_slice($games, 3), 4);
+    array_unshift($chunks, $first3);
+
+    foreach ($chunks as $chunkGames) {
+        addDiscoverRow($data, '', $chunkGames);
+    }
 
     return $data;
 }

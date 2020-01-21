@@ -102,6 +102,29 @@ function filterBestRated($origGames, $limit)
     return array_slice($games, 0, $limit);
 }
 
+function filterMostDownloaded($origGames, $limit)
+{
+    $games = array_values($origGames);
+    usort(
+        $games,
+        function ($gameA, $gameB) {
+            return $gameB->rating->count - $gameA->rating->count;
+        }
+    );
+
+    return array_slice($games, 0, $limit);
+}
+
+function filterRandom($origGames, $limit)
+{
+    $randKeys = array_rand($origGames, $limit);
+    $games = [];
+    foreach ($randKeys as $key) {
+        $games[] = $origGames[$key];
+    }
+    return $games;
+}
+
 function sortByTitle($games)
 {
     usort(
