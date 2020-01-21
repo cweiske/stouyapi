@@ -176,7 +176,7 @@ function buildDiscover(array $games)
     writeJson(
         'api/v1/discover-data/' . categoryPath('Random') . '.json',
         buildSpecialCategory(
-            'Random' . date('Y-m-d H:i'),
+            'Random ' . date('Y-m-d H:i'),
             filterRandom($games, 99)
         )
     );
