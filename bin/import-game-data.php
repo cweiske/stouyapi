@@ -386,6 +386,7 @@ function buildProduct($product)
         'description'   => $product->description ?? '',
         'localPrice'    => $product->localPrice,
         'originalPrice' => $product->originalPrice,
+        'priceInCents'  => $product->originalPrice * 100,
         'percentOff'    => 0,
         'currency'      => $product->currency,
     ];
