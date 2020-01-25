@@ -20,6 +20,10 @@ RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
 RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
 
 #purchased games/products
+# active buy requests
+RewriteCond %{REQUEST_METHOD} POST
+RewriteRule ^api/v1/games/(.+)/purchases?$ /api/v1/games/purchase.php [END]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^api/v1/games/(.+)/purchases?$ /api/v1/games/purchases-empty.json [END]
 
