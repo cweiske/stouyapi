@@ -4,6 +4,5 @@ rm www/api/v1/apps/*
 rm www/api/v1/details-data/*
 rm -r www/api/v1/developers/*
 rm www/api/v1/discover-data/*
-rm www/api/v1/discover.json
 rm www/api/v1/games/*/*
 rm www/api/v1/search-data/*
