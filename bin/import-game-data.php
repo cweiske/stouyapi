@@ -380,7 +380,7 @@ function buildProduct($product)
         return null;
     }
     return [
-        'type'          => 'entitlement',
+        'type'          => $product->type ?? 'entitlement',
         'identifier'    => $product->identifier,
         'name'          => $product->name,
         'description'   => $product->description ?? '',
