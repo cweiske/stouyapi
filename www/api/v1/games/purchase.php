@@ -43,12 +43,22 @@ if ($product === null) {
 $payload = $product;
 $payload->uuid = $buyRequest->uuid;
 
-$enc = [
+//"god of blades" and "pinball arcade" want double-encrypted responses
+// muffin knights works with single encryption
+$enc1 = [
     'key'  => base64_encode('0123456789abcdef'),
     'iv'   => 't3jir1LHpICunvhlM76edQ==',//random bytes
     'blob' => base64_encode(
         json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
     ),
 ];
-echo json_encode($enc, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
+
+$enc2 = [
+    'key'  => base64_encode('0123456789abcdef'),
+    'iv'   => 't3jir1LHpICunvhlM76edQ==',//random bytes
+    'blob' => base64_encode(
+        json_encode($enc1, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
+    ),
+];
+echo json_encode($enc2, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
 ?>
