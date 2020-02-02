@@ -586,11 +586,11 @@ function buildSearch($games)
 function dummyEncrypt($data)
 {
     return [
-        'key'  => base64_encode('0123456789abcdef') . "\n",
-        'iv'   => 't3jir1LHpICunvhlM76edQ==' . "\n",//random bytes
+        'key'  => base64_encode('0123456789abcdef'),
+        'iv'   => 't3jir1LHpICunvhlM76edQ==',//random bytes
         'blob' => base64_encode(
             json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-        ) . "\n",
+        ),
     ];
 }
 
