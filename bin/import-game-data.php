@@ -419,10 +419,12 @@ function buildDetails($game)
                 ],
             ];
         } else {
-            $mediaTiles[] = [
-                'type' => 'video',
-                'url'  => $medium->url,
-            ];
+            if (!isUnsupportedVideoUrl($medium->url)) {
+                $mediaTiles[] = [
+                    'type' => 'video',
+                    'url'  => $medium->url,
+                ];
+            }
         }
     }
 
@@ -850,6 +852,16 @@ function getPromotedProduct($game)
         }
     }
     return null;
+}
+
+/**
+ * vimeo only work with HTTPS now,
+ * and the OUYA does not support SNI.
+ * We get SSL errors and no video for them :/
+ */
+function isUnsupportedVideoUrl($url)
+{
+    return strpos($url, '://vimeo.com/') !== false;
 }
 
 function removeMakeGames(array $games)
