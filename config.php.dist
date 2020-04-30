@@ -4,7 +4,7 @@
  * Copy it to config.php and adjust it.
  */
 $GLOBALS['urlRewrites'] = [
-    '#^https://archive.org/download/#' => 'https://statics.ouya.world/ia/',
+    '#^https://archive.org/download/#' => 'http://statics.ouya.world/ia/',
 ];
 $GLOBALS['packagelists']["cweiske's picks"] = [
     'de.eiswuxe.blookid2',
