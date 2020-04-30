@@ -18,6 +18,7 @@ if (!is_file($foldersFile)) {
 
 //default configuration values
 $GLOBALS['packagelists'] = [];
+$GLOBALS['urlRewrites']  = [];
 $cfgFile = __DIR__ . '/../config.php';
 if (file_exists($cfgFile)) {
     include $cfgFile;
@@ -373,7 +374,7 @@ function buildAppDownload($game, $release)
             'fileSize'      => $release->size,
             'version'       => $release->uuid,
             'contentRating' => $game->contentRating,
-            'downloadLink'  => $release->url,
+            'downloadLink'  => rewriteUrl($release->url),
         ]
     ];
 }
@@ -882,6 +883,14 @@ function removeMakeGenres($genres)
         }
     }
     return $filtered;
+}
+
+function rewriteUrl($url)
+{
+    foreach ($GLOBALS['urlRewrites'] as $pattern => $replacement) {
+        $url = preg_replace($pattern, $replacement, $url);
+    }
+    return $url;
 }
 
 function writeJson($path, $data)

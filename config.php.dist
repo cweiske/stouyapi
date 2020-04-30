@@ -3,6 +3,9 @@
  * Optional configuration file for import-game-data.php
  * Copy it to config.php and adjust it.
  */
+$GLOBALS['urlRewrites'] = [
+    '#^https://archive.org/download/#' => 'https://statics.ouya.world/ia/',
+];
 $GLOBALS['packagelists']["cweiske's picks"] = [
     'de.eiswuxe.blookid2',
     'com.cosmos.babyloniantwins',
