@@ -1,0 +1,10 @@
+<?php
+/**
+ * Optional configuration file for import-game-data.php
+ * Copy it to config.php and adjust it.
+ */
+$GLOBALS['packagelists']["cweiske's picks"] = [
+    'de.eiswuxe.blookid2',
+    'com.cosmos.babyloniantwins',
+    'com.inverseblue.skyriders',
+];

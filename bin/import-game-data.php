@@ -16,11 +16,12 @@ if (!is_file($foldersFile)) {
     error('Given path is not a file: ' . $foldersFile);
 }
 
-$GLOBALS['packagelists']['cweiskepicks'] = [
-    'de.eiswuxe.blookid2',
-    'com.cosmos.babyloniantwins',
-    'com.inverseblue.skyriders',
-];
+//default configuration values
+$GLOBALS['packagelists'] = [];
+$cfgFile = __DIR__ . '/../config.php';
+if (file_exists($cfgFile)) {
+    include $cfgFile;
+}
 
 $wwwDir = __DIR__ . '/../www/';
 
@@ -152,10 +153,13 @@ function buildDiscover(array $games)
         $data, 'Best rated',
         filterBestRated($games, 10)
     );
-    addDiscoverRow(
-        $data, "cweiske's picks",
-        filterByPackageNames($games, $GLOBALS['packagelists']['cweiskepicks'])
-    );
+
+    foreach ($GLOBALS['packagelists'] as $listTitle => $listPackageNames) {
+        addDiscoverRow(
+            $data, $listTitle,
+            filterByPackageNames($games, $listPackageNames)
+        );
+    }
 
     addDiscoverRow(
         $data, 'Special',
