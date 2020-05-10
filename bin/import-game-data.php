@@ -419,7 +419,7 @@ function buildDetails($game)
             $mediaTiles[] = [
                 'type' => 'image',
                 'urls' => [
-                    'thumbnail' => $medium->thumb,
+                    'thumbnail' => $medium->thumb ?? $medium->url,
                     'full'      => $medium->url,
                 ],
             ];
