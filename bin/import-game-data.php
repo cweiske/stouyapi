@@ -7,6 +7,7 @@
  * @author Christian Weiske <cweiske@cweiske.de>
  */
 ini_set('xdebug.halt_level', E_WARNING|E_NOTICE|E_USER_WARNING|E_USER_NOTICE);
+require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/filters.php';
 if (!isset($argv[1])) {
     error('Pass the path to a "folders" file with game data json files folder names');
@@ -696,11 +697,6 @@ function buildDiscoverGameTile($game)
         ],
         'promotedProduct' => buildProduct(getPromotedProduct($game)),
     ];
-}
-
-function categoryPath($title)
-{
-    return str_replace(['/', '\\', ' ', '+', '?'], '_', $title);
 }
 
 function getAllAges($games)
