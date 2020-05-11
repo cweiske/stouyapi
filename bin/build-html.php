@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /**
  * Take the generated JSON files and convert them to HTML for a browser
