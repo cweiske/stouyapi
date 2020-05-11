@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
+  <meta charset="utf-8"/>
   <title>OUYA: <?= htmlspecialchars($title); ?></title>
   <meta name="generator" content="stouyapi"/>
   <link rel="stylesheet" type="text/css" href="../ouya-discover.css"/>
