@@ -6,3 +6,5 @@ rm -r www/api/v1/developers/*
 rm www/api/v1/discover-data/*
 rm www/api/v1/games/*/*
 rm www/api/v1/search-data/*
+rm www/discover/*
+rm www/game/*

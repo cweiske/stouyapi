@@ -2,11 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
  <head>
   <title>OUYA: <?= htmlspecialchars($title); ?></title>
+  <meta name="generator" content="stouyapi"/>
   <link rel="stylesheet" type="text/css" href="../ouya-discover.css"/>
  </head>
  <body class="discover">
   <header>
    <h1><?= htmlspecialchars($title); ?></h1>
+   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="20%"/>
   </header>
 
   <?php foreach ($sections as $section): ?>
@@ -34,5 +36,11 @@
 
   </section>
   <?php endforeach; ?>
+
+  <nav>
+   <?php foreach ($navLinks as $url => $title): ?>
+    <a rel="up" href="<?= htmlspecialchars($url) ?>"><?= htmlspecialchars($title) ?></a>
+   <?php endforeach ?>
+  </nav>
  </body>
 </html>
