@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
  <head>
   <meta charset="utf-8"/>
   <title>OUYA: <?= htmlspecialchars($title); ?></title>
@@ -9,7 +9,7 @@
  <body class="discover">
   <header>
    <h1><?= htmlspecialchars($title); ?></h1>
-   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="20%"/>
+   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
   </header>
 
   <?php foreach ($sections as $section): ?>
@@ -23,7 +23,7 @@
     <section class="tile<?= ($tile->thumb == '') ? ' noimg' : '' ?>">
      <h3 class="title"><a href="<?= htmlspecialchars($tile->detailUrl) ?>"><?= htmlspecialchars($tile->title) ?></a></h3>
      <?php if ($tile->thumb != ''): ?>
-     <a href="<?= htmlspecialchars($tile->detailUrl) ?>"><img src="<?= htmlspecialchars($tile->thumb) ?>"/></a>
+     <a href="<?= htmlspecialchars($tile->detailUrl) ?>"><img src="<?= htmlspecialchars($tile->thumb) ?>" alt="Screenshot of <?= htmlspecialchars($tile->detailUrl) ?>"/></a>
      <?php endif ?>
      <?php if ($tile->type == 'app' && $tile->ratingCount > 0): ?>
      <p class="rating">

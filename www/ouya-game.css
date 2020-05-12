@@ -91,7 +91,9 @@ nav {
     max-height: 50vh;
 }
 
-
+.buttons h2 {
+    display: none;
+}
 .buttons a {
     font-size: 1.5rem;
     color: #CCC;

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
  <head>
   <meta charset="utf-8"/>
   <title><?= htmlspecialchars($json->title); ?> - OUYA game</title>
@@ -8,7 +8,7 @@
  </head>
  <body class="game">
   <header>
-   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="20%"/>
+   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
   </header>
   <section class="text">
    <h1><?= htmlspecialchars($json->title); ?></h1>
@@ -61,6 +61,7 @@
   </section>
 
   <section class="buttons">
+   <h2>Links</h2>
    <div>
     <a href="<?= $apkDownloadUrl ?>">Download .apk</a>
     <p>
