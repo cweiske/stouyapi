@@ -85,6 +85,9 @@ nav {
     content: "|";
     font-weight: normal;
 }
+.text a {
+    color: #CCC;
+}
 
 .description {
     overflow-y: auto;

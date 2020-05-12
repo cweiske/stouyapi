@@ -5,6 +5,7 @@
   <title>OUYA: <?= htmlspecialchars($title); ?></title>
   <meta name="generator" content="stouyapi"/>
   <link rel="stylesheet" type="text/css" href="../ouya-discover.css"/>
+  <link rel="icon" href="../favicon.ico"/>
  </head>
  <body class="discover">
   <header>

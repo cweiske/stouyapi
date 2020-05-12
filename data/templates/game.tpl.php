@@ -4,7 +4,9 @@
   <meta charset="utf-8"/>
   <title><?= htmlspecialchars($json->title); ?> - OUYA game</title>
   <meta name="generator" content="stouyapi"/>
+  <meta name="author" content="<?= htmlspecialchars($json->developer->name) ?>"/>
   <link rel="stylesheet" type="text/css" href="../ouya-game.css"/>
+  <link rel="icon" href="../favicon.ico"/>
  </head>
  <body class="game">
   <header>
@@ -15,13 +17,17 @@
    <dl class="meta">
     <dt>Rating</dt>
     <dd class="rating">
-     <span class="average average-<?= round($json->rating->average) ?>"><?= $json->rating->average ?></span>
+     <span class="average average-<?= round($json->rating->average) ?>" title="<?= $json->rating->average ?>"><?= $json->rating->average ?></span>
      <span class="count">(<?= $json->rating->count ?>)</span>
     </dd>
 
     <dt>Developer</dt>
     <dd class="company">
-     <?= htmlspecialchars($json->developer->name) ?>
+     <?php if ($appsJson->app->website): ?>
+      <a href="<?= htmlspecialchars($appsJson->app->website) ?>"><?= htmlspecialchars($json->developer->name) ?></a>
+     <?php else: ?>
+      <?= htmlspecialchars($json->developer->name) ?>
+     <?php endif ?>
     </dd>
 
     <dt>Suggested age</dt>

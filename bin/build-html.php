@@ -100,7 +100,11 @@ function renderDiscoverFile($discoverFile)
 function renderGameFile($gameDataFile)
 {
     $json = json_decode(file_get_contents($gameDataFile));
+
     $appsDir = dirname($gameDataFile, 2) . '/apps/';
+    $appsFile = $appsDir . $json->version->uuid . '.json';
+    $appsJson = json_decode(file_get_contents($appsFile));
+
     $downloadJson = json_decode(
         file_get_contents(
             $appsDir . $json->version->uuid . '-download.json'
