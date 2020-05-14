@@ -56,15 +56,6 @@ if ($ip == '') {
     echo 'Cannot detect your IP address' . "\n";
     exit(1);
 }
-if (strpos($ip, ':') !== false) {
-    header('HTTP/1.0 400 Bad Request');
-    header('Content-type: text/plain');
-    echo 'Sorry, IPv6 is not supported' . "\n";
-    echo 'This here only works if the OUYA and your PC have the same IP address,'
-        . "\n";
-    echo 'and this is definitely not the case when using IPv6' . "\n";
-    exit(1);
-}
 $ip = mapIp($ip);
 
 try {

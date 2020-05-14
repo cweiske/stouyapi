@@ -11,6 +11,10 @@
  */
 function mapIp($ip)
 {
+    if (strpos($ip, ':') !== false) {
+        return mapIpv6($ip);
+    }
+
     $private = substr($ip, 0, 3) == '10.'
         || substr($ip, 0, 7) == '172.16.'
         || substr($ip, 0, 7) == '172.17.'
@@ -36,4 +40,41 @@ function mapIp($ip)
         return 'local';
     }
     return $ip;
+}
+
+/**
+ * Map IPv6 addresses to their 64bit prefix, assuming that the PC and the OUYA
+ * share the same prefix.
+ * Map local IPs to a single IP so that this the queue can be used
+ * in the home network.
+ *
+ * @see  RFC 6890: Special-Purpose IP Address Registries
+ * @see  RFC 4291: IP Version 6 Addressing Architecture
+ * @link https://en.wikipedia.org/wiki/Link-local_address
+ */
+function mapIpv6($ip)
+{
+    $ip = strtolower(expandIpv6($ip));
+    if ($ip == '0000:0000:0000:0000:0000:0000:0000:0001') {
+        //localhost
+        return 'local';
+    } else if (substr($ip, 0, 2) == 'fc' || substr($ip, 0, 2) == 'fd') {
+        // fc00::/7 = Unique Local Unicast
+        return 'local';
+    } else if (substr($ip, 0, 3) == 'fe8'
+        || substr($ip, 0, 3) == 'fe9'
+        || substr($ip, 0, 3) == 'fea'
+        || substr($ip, 0, 3) == 'feb'
+    ) {
+        // fe80::/10 = Link-Local unicast
+        return 'local';
+    }
+
+    return substr($ip, 0, 19);
+}
+
+function expandIpv6($ip)
+{
+    $hex = unpack("H*hex", inet_pton($ip));
+    return implode(':', str_split($hex['hex'], 4));
 }
