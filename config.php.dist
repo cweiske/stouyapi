@@ -11,3 +11,4 @@ $GLOBALS['packagelists']["cweiske's picks"] = [
     'com.cosmos.babyloniantwins',
     'com.inverseblue.skyriders',
 ];
+$GLOBALS['pushToMyOuyaUrl'] = '../push-to-my-ouya.php';

@@ -75,6 +75,15 @@
      <?= gmdate('Y-m-d', $json->version->publishedAt) ?>
     </p>
    </div>
+   <div>
+    <form method="post" action="<?= htmlspecialchars($pushUrl) ?>" id="push" onsubmit="pushToMyOuya();return false;">
+     <button name="push" type="submit" class="push-to-my-ouya">
+      <img src="../push-to-my-ouya.png" width="335" height="63"
+           alt="Push to my OUYA"
+      />
+     </button>
+    </form>
+   </div>
   </section>
 
   <nav>
@@ -82,5 +91,35 @@
     <a rel="up" href="<?= htmlspecialchars($url) ?>"><?= htmlspecialchars($title) ?></a>
    <?php endforeach ?>
   </nav>
+
+  <div style="display: none" class="popup" id="push-success">
+   <a class="close" href="#" onclick="this.parentNode.style.display='none';return false;">⊗</a>
+   <strong><?= htmlspecialchars($json->title); ?></strong>
+   will start downloading to your OUYA within the next few minutes
+  </div>
+  <div style="display: none" class="popup" id="push-error">
+   <a class="close" href="#" onclick="this.parentNode.style.display='none';return false;">⊗</a>
+   <strong>Push error</strong>
+   <p>error message</p>
+  </div>
+
+  <script type="text/javascript">
+   function pushToMyOuya() {
+       var form = document.getElementById("push");
+       var req = new XMLHttpRequest();
+       req.addEventListener("load", pushToMyOuyaComplete);
+       req.open("POST", form.action);
+       req.send();
+   }
+   function pushToMyOuyaComplete() {
+       if (this.status / 100 == 2) {
+           document.getElementById('push-success').style.display = "";
+       } else {
+           var err = document.getElementById('push-error');
+           err.getElementsByTagName("p")[0].textContent = this.responseText;
+           err.style.display = "";
+       }
+   }
+  </script>
  </body>
 </html>

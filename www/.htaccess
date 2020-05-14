@@ -39,3 +39,9 @@ RewriteRule ^api/v1/search /api/v1/search-data/%1.json? [END]
 
 #this one wants a 204 status code
 RewriteRule ^api/v1/status$ - [R=204,L]
+
+#push-to-my-ouya needs php scripting support
+RewriteRule ^api/v1/queued_downloads?$ /api/v1/queued_downloads.php [END]
+
+RewriteCond %{REQUEST_METHOD} DELETE
+RewriteRule ^api/v1/queued_downloads/(.+)?$ /api/v1/queued_downloads_delete.php?game=$1 [END]

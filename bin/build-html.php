@@ -7,6 +7,13 @@
  */
 require_once __DIR__ . '/functions.php';
 
+//default configuration values
+$GLOBALS['pushToMyOuyaUrl'] = '../push-to-my-ouya.php';
+$cfgFile = __DIR__ . '/../config.php';
+if (file_exists($cfgFile)) {
+    include $cfgFile;
+}
+
 $wwwDir = __DIR__ . '/../www/';
 $discoverDir = __DIR__ . '/../www/api/v1/discover-data/';
 $wwwDiscoverDir = $wwwDir . 'discover/';
@@ -111,6 +118,8 @@ function renderGameFile($gameDataFile)
         )
     );
     $apkDownloadUrl = $downloadJson->app->downloadLink;
+    $pushUrl = $GLOBALS['pushToMyOuyaUrl']
+        . '?game=' . urlencode($json->apk->package);
 
     $navLinks = [];
     foreach ($json->genres as $genreTitle) {

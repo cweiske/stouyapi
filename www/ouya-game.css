@@ -97,9 +97,19 @@ nav {
 .buttons h2 {
     display: none;
 }
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
 .buttons a {
     font-size: 1.5rem;
     color: #CCC;
+}
+button.push-to-my-ouya {
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    background-color: transparent;
 }
 
 nav {
@@ -155,4 +165,32 @@ nav a {
 }
 .average-5:before {
     content: "★★★★★";
+}
+
+
+.popup {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    width: 20rem;
+    padding: 1rem;
+    background-color: black;
+    border: 1px solid #AAA;
+    border-radius: 0.5rem;
+}
+.popup a.close {
+    color: white;
+    font-size: 2rem;
+    text-decoration: none;
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+}
+.popup a.close:hover {
+    color: #fc4422;
+}
+.popup strong {
+    display: block;
+    color: #fc4422;
+    margin-bottom: 0.5rem;
 }
