@@ -12,8 +12,9 @@ $apiGameDir = __DIR__ . '/details-data/';
 require_once __DIR__ . '/../../../src/push-to-my-ouya-helpers.php';
 
 $ip = $_SERVER['REMOTE_ADDR'];
-if ($ip == '' || strpos($ip, ':') !== false) {
-    //empty or IPv6
+if ($ip == '') {
+    //empty ip
+    header('X-Fail-Reason: empty ip address');
     header('Content-type: application/json');
     echo file_get_contents('queued_downloads');
     exit(1);
@@ -24,6 +25,7 @@ try {
     $db = new SQLite3($dbFile, SQLITE3_OPEN_READONLY);
 } catch (Exception $e) {
     //db file not found
+    header('X-Fail-Reason: database file not found');
     header('Content-type: application/json');
     echo file_get_contents('queued_downloads');
     exit(1);
