@@ -170,8 +170,8 @@ nav a {
 
 .popup {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    top: 1.5rem;
+    right: 1.5rem;
     width: 20rem;
     padding: 1rem;
     background-color: black;
