@@ -53,6 +53,31 @@ and then generate the API files with it::
     $ ./bin/import-game-data.php ouya-game-data/folders
 
 
+Building the web discover store
+===============================
+After building the API files, generate the HTML::
+
+  $ ./bin/build-html.php
+
+
+===============
+Push to my OUYA
+===============
+stouyapi's HTML game detail page have a "Push to my OUYA" button that
+allows anyone to tell his own OUYA to install that game.
+It works without any user accounts, and is only based on IP addresses.
+
+If your PC that you click the Push button on and your OUYA have the same
+public IP address (IPv4 NAT), or the same IPv6 64bit prefix, then
+the OUYA will install the game within 5 minutes.
+
+It will also work if you run stouyapi inside your local network, because
+all private IP addresses are mapped to a special "local" address.
+
+You can inspect your own download queue by simply opening
+``/api/v1/queued_downloads`` in your browser.
+
+
 ========
 See also
 ========
