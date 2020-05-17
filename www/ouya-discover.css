@@ -1,7 +1,11 @@
+html {
+    height: 100%;
+}
 body {
+    min-height: 100%;
     background-color: #333;
     background-image: url("bg.jpg");
-    background-size: 100vw auto;
+    background-size: cover;
     background-attachment: fixed;
     color: #CCC;
     font-family: sans;
