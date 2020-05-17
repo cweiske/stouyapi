@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
  <head>
   <meta charset="utf-8"/>
-  <title>OUYA: <?= htmlspecialchars($title); ?></title>
+  <title><?= htmlspecialchars($title); ?></title>
   <meta name="generator" content="stouyapi"/>
   <link rel="stylesheet" type="text/css" href="../ouya-discover.css"/>
   <link rel="icon" href="../favicon.ico"/>
  </head>
  <body class="discover">
   <header>
-   <h1><?= htmlspecialchars($title); ?></h1>
+   <h1><?= htmlspecialchars($json->title); ?></h1>
    <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
   </header>
 

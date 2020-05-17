@@ -50,7 +50,7 @@ function renderDiscoverFile($discoverFile)
 {
     $json = json_decode(file_get_contents($discoverFile));
 
-    $title    = $json->title;
+    $title    = $json->title . ' OUYA games';
     $sections = [];
     foreach ($json->rows as $row) {
         $section = (object) [
@@ -89,8 +89,9 @@ function renderDiscoverFile($discoverFile)
     }
 
     $navLinks = [];
-    if ($title == 'DISCOVER') {
+    if ($json->title == 'DISCOVER') {
         $navLinks['../'] = 'back';
+        $title = 'OUYA games list';
     } else {
         $navLinks['./'] = 'discover';
     }
