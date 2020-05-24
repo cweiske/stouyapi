@@ -56,7 +56,7 @@
    <div class="content">
     <?php foreach ($json->mediaTiles as $tile): ?>
      <?php if ($tile->type == 'image'): ?>
-      <img src="<?= htmlspecialchars($tile->urls->thumbnail) ?>" alt="Screenshot of <?= htmlspecialchars($json->title); ?>"/>
+      <img src="<?= htmlspecialchars($tile->urls->full) ?>" alt="Screenshot of <?= htmlspecialchars($json->title); ?>"/>
      <?php elseif ($tile->type == 'video'): ?>
       <video controls="">
        <source src="<?= htmlspecialchars($tile->url) ?>"/>
