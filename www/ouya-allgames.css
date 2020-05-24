@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+}
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+    background-color: #333;
+    background-image: url("bg_details.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+    color: #CCC;
+    font-family: sans;
+    margin: 0;
+    padding: 0;
+    padding-top: 10ex;
+    padding-left: 0ex;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 6rem;
+    padding-left: 3ex;
+    background-color: #333;
+    background-image: url("bg_details.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+}
+.ouyalogo {
+    height: 3rem;
+    width: auto;
+    position: fixed;
+    top: 2ex;
+    right: 6vw;
+}
+
+a {
+    color: #CCC;
+}
+
+nav {
+    margin-top: 5ex;
+    text-align: center;
+}
+nav a {
+    color: white;
+    margin-left: 1ex;
+    margin-right: 1ex;
+}
+
+thead th {
+    text-align: left;
+    /*position: sticky;*/
+    top: 4rem;
+    background-color: rgba(0, 0, 0, .6);
+    padding: 0.5ex;
+    vertical-align: top;
+}
+
+table.dataTable.display tbody tr,
+table.dataTable.display tbody tr.odd
+{
+    background-color: transparent;
+}
+
+table.dataTable.display tbody tr > .sorting_1,
+table.dataTable.order-column.stripe tbody tr > .sorting_1,
+table.dataTable.display tbody tr.odd > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.odd > .sorting_1,
+table.dataTable.display tbody tr.even > .sorting_1,
+table.dataTable.order-column.stripe tbody tr.even > .sorting_1
+{
+    background-color: rgba(0, 0, 0, .4);
+}
+
+table.dataTable.display tbody tr:hover,
+table.dataTable.display tbody tr.odd:hover,
+table.dataTable.display tbody tr.even:hover
+{
+    background-color: rgba(255, 255, 255, .2);
+}
+
+.dataTables_info,
+.dataTables_filter
+{
+    color: inherit !important;
+}
+
+#allouyagames_filter {
+    display: none;
+}
+
+.dataTable.fixedHeader-floating {
+    background-color: #333;
+    background-image: url("bg_details.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.yadcf-filter-wrapper {
+    display: block;
+    margin-top: 1ex;
+}
+.yadcf-filter,
+.yadcf-filter-reset-button
+{
+    background-color: transparent;
+    color: inherit;
+    height: 4ex;
+}

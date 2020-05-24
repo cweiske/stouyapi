@@ -46,6 +46,46 @@ foreach (glob($discoverDir . '*.json') as $discoverFile) {
     );
 }
 
+file_put_contents(
+    $wwwDiscoverDir . 'allgames.htm',
+    renderAllGamesList(glob($gameDetailsDir . '*.json'))
+);
+
+
+function renderAllGamesList($detailsFiles)
+{
+    $games = [];
+    foreach ($detailsFiles as $gameDataFile) {
+        $json = json_decode(file_get_contents($gameDataFile));
+        $games[] = (object) [
+            'packageName'  => basename($gameDataFile, '.json'),
+            'title'        => $json->title,
+            'genres'       => $json->genres,
+            'developer'    => $json->developer->name,
+            'suggestedAge' => $json->suggestedAge,
+            'apkVersion'   => $json->version->number,
+            'apkTimestamp' => $json->version->publishedAt,
+            'players'      => $json->gamerNumbers,
+            'detailUrl'    => '../game/' . str_replace(
+                        'ouya://launcher/details?app=',
+                        '',
+                        basename($gameDataFile, '.json')
+                    ) . '.htm',
+        ];
+    }
+    $navLinks = [
+        './' => 'back',
+    ];
+
+    $allGamesTemplate = __DIR__ . '/../data/templates/allgames.tpl.php';
+    ob_start();
+    include $allGamesTemplate;
+    $html = ob_get_contents();
+    ob_end_clean();
+
+    return $html;
+}
+
 function renderDiscoverFile($discoverFile)
 {
     $json = json_decode(file_get_contents($discoverFile));
@@ -91,6 +131,7 @@ function renderDiscoverFile($discoverFile)
     $navLinks = [];
     if ($json->title == 'DISCOVER') {
         $navLinks['../'] = 'back';
+        $navLinks['allgames.htm'] = 'all games';
         $title = 'OUYA games list';
     } else {
         $navLinks['./'] = 'discover';
