@@ -47,6 +47,9 @@
    </dl>
 
    <p class="description">
+    <?php if ($json->inAppPurchases): ?>
+    <strong>* Includes in-app purchases</strong><br/><br/>
+    <?php endif ?>
     <?= nl2br(htmlspecialchars($json->description)) ?>
    </p>
   </section>
