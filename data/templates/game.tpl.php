@@ -68,6 +68,7 @@
 
   <section class="buttons">
    <h2>Links</h2>
+   <?php if ($apkDownloadUrl): ?>
    <div>
     <a href="<?= $apkDownloadUrl ?>">Download .apk</a>
     <p>
@@ -75,6 +76,12 @@
      <?= gmdate('Y-m-d', $json->version->publishedAt) ?>
     </p>
    </div>
+   <?php endif ?>
+   <?php if ($internetArchiveUrl): ?>
+   <div>
+    <a href="<?= $internetArchiveUrl ?>">Internet Archive page</a>
+   </div>
+   <?php endif ?>
    <div>
     <form method="post" action="<?= htmlspecialchars($pushUrl) ?>" id="push" onsubmit="pushToMyOuya();return false;">
      <button name="push" type="submit" class="push-to-my-ouya">

@@ -449,6 +449,13 @@ function buildDetails($game)
         $product = buildProduct($gamePromoted);
     }
 
+    $iaUrl = null;
+    if (isset($game->latestRelease->url)
+        && substr($game->latestRelease->url, 0, 29) == 'https://archive.org/download/'
+    ) {
+        $iaUrl = dirname($game->latestRelease->url) . '/';
+    }
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
     return [
         'type'             => 'Game',
@@ -507,6 +514,10 @@ function buildDetails($game)
 
         'promotedProduct' => $product,
         'buttons'         => $buttons,
+
+        'stouyapi' => [
+            'internet-archive' => $iaUrl,
+        ]
     ];
 }
 

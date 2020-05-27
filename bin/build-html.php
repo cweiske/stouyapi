@@ -159,7 +159,16 @@ function renderGameFile($gameDataFile)
             $appsDir . $json->version->uuid . '-download.json'
         )
     );
+
     $apkDownloadUrl = $downloadJson->app->downloadLink;
+    /*
+    if (isset($json->premium) && $json->premium) {
+        $apkDownloadUrl = null;
+    }
+    */
+
+    $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
+
     $pushUrl = $GLOBALS['pushToMyOuyaUrl']
         . '?game=' . urlencode($json->apk->package);
 
