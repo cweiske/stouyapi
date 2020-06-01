@@ -62,6 +62,7 @@ function renderAllGamesList($detailsFiles)
             'title'        => $json->title,
             'genres'       => $json->genres,
             'developer'    => $json->developer->name,
+            'developerUrl' => $json->stouyapi->{'developer-url'} ?? null,
             'suggestedAge' => $json->suggestedAge,
             'apkVersion'   => $json->version->number,
             'apkTimestamp' => $json->version->publishedAt,
@@ -168,6 +169,7 @@ function renderGameFile($gameDataFile)
     */
 
     $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
+    $developerUrl       = $json->stouyapi->{'developer-url'} ?? null;
 
     $pushUrl = $GLOBALS['pushToMyOuyaUrl']
         . '?game=' . urlencode($json->apk->package);

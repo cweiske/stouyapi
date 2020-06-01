@@ -517,6 +517,7 @@ function buildDetails($game)
 
         'stouyapi' => [
             'internet-archive' => $iaUrl,
+            'developer-url'    => $game->developer->website ?? null,
         ]
     ];
 }

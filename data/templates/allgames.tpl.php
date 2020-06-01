@@ -34,7 +34,13 @@
         <?= htmlspecialchars($game->title) ?>
        </a>
       </td>
-      <td><?= htmlspecialchars($game->developer) ?></td>
+      <td>
+       <?php if ($game->developerUrl): ?>
+        <a href="<?= htmlspecialchars($game->developerUrl) ?>"><?= htmlspecialchars($game->developer) ?></a>
+       <?php else: ?>
+        <?= htmlspecialchars($game->developer) ?>
+       <?php endif ?>
+      </td>
       <td><?= htmlspecialchars($game->suggestedAge) ?></td>
       <td><?= htmlspecialchars(implode(', ', $game->players)) ?></td>
       <td><?= htmlspecialchars(implode(', ', $game->genres)) ?></td>

@@ -23,8 +23,8 @@
 
     <dt>Developer</dt>
     <dd class="company">
-     <?php if ($appsJson->app->website): ?>
-      <a href="<?= htmlspecialchars($appsJson->app->website) ?>"><?= htmlspecialchars($json->developer->name) ?></a>
+     <?php if ($developerUrl): ?>
+      <a href="<?= htmlspecialchars($developerUrl) ?>"><?= htmlspecialchars($json->developer->name) ?></a>
      <?php else: ?>
       <?= htmlspecialchars($json->developer->name) ?>
      <?php endif ?>
@@ -82,7 +82,12 @@
    <?php endif ?>
    <?php if ($internetArchiveUrl): ?>
    <div>
-    <a href="<?= $internetArchiveUrl ?>">Internet Archive page</a>
+    <a href="<?= $internetArchiveUrl ?>">Internet Archive</a>
+   </div>
+   <?php endif ?>
+   <?php if ($appsJson->app->website): ?>
+   <div>
+    <a href="<?= $appsJson->app->website ?>">Game website</a>
    </div>
    <?php endif ?>
    <div>
