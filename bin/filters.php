@@ -117,7 +117,7 @@ function filterMostDownloaded($origGames, $limit)
 
 function filterRandom($origGames, $limit)
 {
-    $randKeys = array_rand($origGames, $limit);
+    $randKeys = array_rand($origGames, min(count($origGames), $limit));
     $games = [];
     foreach ($randKeys as $key) {
         $games[] = $origGames[$key];
