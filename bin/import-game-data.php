@@ -551,6 +551,9 @@ function buildDeveloperProductOnly($product, $developer)
  */
 function buildDeveloperProducts($products, $developer)
 {
+    //remove duplicates
+    $products = array_values(array_column($products, null, 'identifier'));
+
     $jsonProducts = [];
     foreach ($products as $product) {
         $jsonProducts[] = buildProduct($product);
