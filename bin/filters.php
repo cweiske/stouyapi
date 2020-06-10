@@ -48,9 +48,11 @@ function filterByPackageNames($origGames, $packageNames)
     $filtered = [];
     foreach ($origGames as $game) {
         if (isset($names[$game->packageName])) {
-            $filtered[] = $game;
+            $filtered[$names[$game->packageName]] = $game;
         }
     }
+    //keep original order
+    ksort($filtered, SORT_NUMERIC);
     return $filtered;
 }
 
