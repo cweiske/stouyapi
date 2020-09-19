@@ -9,6 +9,8 @@
  * Maximal 30 games per IP to prevent flooding.
  *
  * @author Christian Weiske <cweiske@cweiske.de>
+ * @see    api/v1/queued_downloads.php
+ * @see    api/v1/queued_downloads_delete.php
  */
 $dbFile     = __DIR__ . '/../data/push-to-my-ouya.sqlite3';
 $apiGameDir = __DIR__ . '/api/v1/details-data/';
@@ -33,7 +35,7 @@ if (!isset($_GET['game'])) {
 }
 
 $game = $_GET['game'];
-$cleanGame = preg_replace('#[^a-zA-Z0-9.]#', '', $game);
+$cleanGame = preg_replace('#[^a-zA-Z0-9._]#', '', $game);
 if ($game != $cleanGame) {
     header('HTTP/1.0 400 Bad Request');
     header('Content-type: text/plain');
