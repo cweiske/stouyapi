@@ -21,7 +21,7 @@ if ($ip == '') {
 $ip = mapIp($ip);
 
 $game = $_GET['game'];
-$cleanGame = preg_replace('#[^a-zA-Z0-9.]#', '', $game);
+$cleanGame = preg_replace('#[^a-zA-Z0-9._]#', '', $game);
 if ($game != $cleanGame || $game == '') {
     header('HTTP/1.0 400 Bad Request');
     header('Content-type: text/plain');
