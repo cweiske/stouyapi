@@ -11,4 +11,17 @@ $GLOBALS['packagelists']["cweiske's picks"] = [
     'com.cosmos.babyloniantwins',
     'com.inverseblue.skyriders',
 ];
+$GLOBALS['home']['2020 Winter GameJam'] = [
+    'com.DESKINK.ToneTests',
+    'com.Eightbbgames.yahayor',
+    'com.NoelRojasOliveras.PaintKiller',
+    'com.NYYLE.NYCTO',
+    'com.oliverstogden.trf',
+    'com.samuelsousa.shootdestroy',
+    'com.scorpion.shootout',
+    'com.sd_game_dev.aliens_taste_my_sword',
+    'com.StrawHat.Fall',
+    'DarkSpacePioneer',
+    'tv.ouya.win.unity.brokenbeauty',
+];
 $GLOBALS['pushToMyOuyaUrl'] = '../push-to-my-ouya.php';

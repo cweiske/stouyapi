@@ -297,19 +297,29 @@ function buildSpecialCategory($name, $games)
 
 function buildDiscoverHome(array $games)
 {
-    //we do not want anything here for now
     $data = [
         'title' => 'home',
         'rows'  => [
-            [
-                'title' => 'FEATURED',
-                'showPrice' => false,
-                'ranked'    => false,
-                'tiles'     => [],
-            ]
         ],
         'tiles' => [],
     ];
+
+    if (isset($GLOBALS['home'])) {
+        reset($GLOBALS['home']);
+        $title = key($GLOBALS['home']);
+        addDiscoverRow(
+            $data, $title,
+            filterByPackageNames($games, $GLOBALS['home'][$title])
+        );
+    } else {
+        $data['rows'][] = [
+            'title'     => 'FEATURED',
+            'showPrice' => false,
+            'ranked'    => false,
+            'tiles'     => [],
+        ];
+    }
+
     return $data;
 }
 
