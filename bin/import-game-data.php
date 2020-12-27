@@ -46,6 +46,8 @@ foreach (file($foldersFile) as $line) {
 $games = [];
 $count = 0;
 $developers = [];
+
+//load game data. doing early to collect a developer's games
 foreach ($gameFiles as $gameFile) {
     $game = json_decode(file_get_contents($gameFile));
     if ($game === null) {
@@ -54,18 +56,18 @@ foreach ($gameFiles as $gameFile) {
     addMissingGameProperties($game);
     $games[$game->packageName] = $game;
 
-    writeJson(
-        'api/v1/details-data/' . $game->packageName . '.json',
-        buildDetails($game)
-    );
-
     if (!isset($developers[$game->developer->uuid])) {
         $developers[$game->developer->uuid] = [
-            'info'     => $game->developer,
-            'products' => [],
+            'info'      => $game->developer,
+            'products'  => [],
+            'gameNames' => [],
         ];
     }
+    $developers[$game->developer->uuid]['gameNames'][] = $game->packageName;
+}
 
+//write json api files
+foreach ($games as $game) {
     $products = $game->products ?? [];
     foreach ($products as $product) {
         writeJson(
@@ -76,7 +78,14 @@ foreach ($gameFiles as $gameFile) {
         $developers[$game->developer->uuid]['products'][] = $product;
     }
 
-    /**/
+    writeJson(
+        'api/v1/details-data/' . $game->packageName . '.json',
+        buildDetails(
+            $game,
+            count($developers[$game->developer->uuid]['gameNames']) > 1
+        )
+    );
+
     writeJson(
         'api/v1/games/' . $game->packageName . '/purchases',
         buildPurchases($game)
@@ -116,6 +125,16 @@ foreach ($developers as $developer) {
         . '/current_gamer',
         buildDeveloperCurrentGamer()
     );
+
+    if (count($developer['gameNames']) > 1) {
+        writeJson(
+            'api/v1/discover-data/dev--' . $developer['info']->uuid . '.json',
+            buildSpecialCategory(
+                'Developer: ' . $developer['info']->name,
+                filterByPackageNames($games, $developer['gameNames'])
+            )
+        );
+    }
 }
 
 writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
@@ -277,6 +296,11 @@ function buildMakeCategory($name, $games)
     return $data;
 }
 
+/**
+ * Category without the "Last updated" or "Best rated" top rows
+ *
+ * Used for "Best rated", "Most rated", "Random"
+ */
 function buildSpecialCategory($name, $games)
 {
     $data = [
@@ -412,7 +436,7 @@ function buildProduct($product)
 /**
  * Build /app/v1/details?app=org.example.game
  */
-function buildDetails($game)
+function buildDetails($game, $linkDeveloperPage = false)
 {
     $latestRelease = $game->latestRelease;
 
@@ -468,7 +492,7 @@ function buildDetails($game)
     }
 
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
-    return [
+    $data = [
         'type'             => 'Game',
         'title'            => $game->title,
         'description'      => $game->description,
@@ -531,6 +555,13 @@ function buildDetails($game)
             'developer-url'    => $game->developer->website ?? null,
         ]
     ];
+
+    if ($linkDeveloperPage) {
+        $data['developer']['url'] = 'ouya://launcher/discover/dev--'
+            . categoryPath($game->developer->uuid);
+    }
+
+    return $data;
 }
 
 function buildDeveloperCurrentGamer()

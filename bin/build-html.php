@@ -167,6 +167,14 @@ function renderGameFile($gameDataFile)
         $apkDownloadUrl = null;
     }
     */
+    $developerDetailsUrl = null;
+    if (isset($json->developer->url) && $json->developer->url) {
+        $developerDetailsUrl = '../discover/' . str_replace(
+            'ouya://launcher/discover/',
+            '',
+            $json->developer->url
+        ) . '.htm';
+    }
 
     $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
     $developerUrl       = $json->stouyapi->{'developer-url'} ?? null;

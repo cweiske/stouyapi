@@ -85,6 +85,11 @@
     <a href="<?= $internetArchiveUrl ?>">Internet Archive</a>
    </div>
    <?php endif ?>
+   <?php if ($developerDetailsUrl): ?>
+   <div>
+    <a href="<?= $developerDetailsUrl ?>">Developer page</a>
+   </div>
+   <?php endif ?>
    <?php if ($appsJson->app->website): ?>
    <div>
     <a href="<?= $appsJson->app->website ?>">Game website</a>
