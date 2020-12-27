@@ -112,7 +112,6 @@ foreach ($developers as $developer) {
         buildDeveloperProducts($developer['products'], $developer['info'])
     );
     writeJson(
-        //index.htm does not need a rewrite rule
         'api/v1/developers/' . $developer['info']->uuid
         . '/current_gamer',
         buildDeveloperCurrentGamer()
@@ -153,7 +152,8 @@ function buildDiscover(array $games)
     );
     addDiscoverRow(
         $data, 'Best rated',
-        filterBestRated($games, 10)
+        filterBestRated($games, 10),
+        true
     );
 
     foreach ($GLOBALS['packagelists'] as $listTitle => $listPackageNames) {
@@ -250,7 +250,8 @@ function buildDiscoverCategory($name, $games)
     );
     addDiscoverRow(
         $data, 'Best rated',
-        filterBestRated($games, 10)
+        filterBestRated($games, 10),
+        true
     );
 
     $games = sortByTitle($games);
@@ -640,12 +641,12 @@ function addChunkedDiscoverRows(&$data, $games, $title)
     }
 }
 
-function addDiscoverRow(&$data, $title, $games)
+function addDiscoverRow(&$data, $title, $games, $ranked = false)
 {
     $row = [
         'title'     => $title,
         'showPrice' => true,
-        'ranked'    => false,
+        'ranked'    => $ranked,
         'tiles'     => [],
     ];
     foreach ($games as $game) {
