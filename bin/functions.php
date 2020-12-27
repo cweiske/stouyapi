@@ -5,6 +5,6 @@
 
 function categoryPath($title)
 {
-    return str_replace(['/', '\\', ' ', '+', '?'], '_', $title);
+    return str_replace(['/', '\\', ' ', '+', '?', '!'], '_', $title);
 }
 ?>
