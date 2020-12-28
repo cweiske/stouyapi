@@ -221,7 +221,18 @@ function buildDiscover(array $games)
     foreach ($players as $num => $title) {
         writeJson(
             'api/v1/discover-data/' . categoryPath($title) . '.json',
-            buildDiscoverCategory($title, filterByPlayers($games, $num))
+            buildDiscoverCategory(
+                $title,
+                //I do not want emulators here,
+                // and neither Streaming apps
+                filterByGenre(
+                    filterByGenre(
+                        filterByPlayers($games, $num),
+                        'Emulator', true
+                    ),
+                    'App', true
+                )
+            )
         );
     }
 
