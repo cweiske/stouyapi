@@ -78,6 +78,19 @@ function filterBySearchWord($origGames, $searchWord)
     return $filtered;
 }
 
+function filterLastAdded($origGames, $limit)
+{
+    $games = array_values($origGames);
+    usort(
+        $games,
+        function ($gameA, $gameB) {
+            return strtotime($gameB->firstRelease->date) - strtotime($gameA->firstRelease->date);
+        }
+    );
+
+    return array_slice($games, 0, $limit);
+}
+
 function filterLastUpdated($origGames, $limit)
 {
     $games = array_values($origGames);

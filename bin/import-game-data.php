@@ -166,8 +166,8 @@ function buildDiscover(array $games)
     ];
 
     addDiscoverRow(
-        $data, 'Last Updated',
-        filterLastUpdated($games, 10)
+        $data, 'New games',
+        filterLastAdded($games, 10)
     );
     addDiscoverRow(
         $data, 'Best rated',
@@ -188,6 +188,7 @@ function buildDiscover(array $games)
             'Best rated',
             'Most rated',
             'Random',
+            'Last updated',
         ]
     );
     writeJson(
@@ -204,6 +205,10 @@ function buildDiscover(array $games)
             'Random ' . date('Y-m-d H:i'),
             filterRandom($games, 99)
         )
+    );
+    writeJson(
+        'api/v1/discover-data/' . categoryPath('Last updated') . '.json',
+        buildSpecialCategory('Last updated', filterLastUpdated($games, 99))
     );
 
     $players = [
@@ -814,7 +819,9 @@ function addMissingGameProperties($game)
         $game->rating->count = 0;
     }
 
+    $game->firstRelease  = null;
     $game->latestRelease = null;
+    $firstReleaseTimestamp  = null;
     $latestReleaseTimestamp = 0;
     foreach ($game->releases as $release) {
         if (!isset($release->publicSize)) {
@@ -829,6 +836,15 @@ function addMissingGameProperties($game)
             $game->latestRelease    = $release;
             $latestReleaseTimestamp = $releaseTimestamp;
         }
+        if ($firstReleaseTimestamp === null
+            || $releaseTimestamp < $firstReleaseTimestamp
+        ) {
+            $game->firstRelease    = $release;
+            $firstReleaseTimestamp = $releaseTimestamp;
+        }
+    }
+    if ($game->firstRelease === null) {
+        error('No first release for ' . $game->packageName);
     }
     if ($game->latestRelease === null) {
         error('No latest release for ' . $game->packageName);
