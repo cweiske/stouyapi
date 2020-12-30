@@ -37,6 +37,9 @@ RewriteCond %{QUERY_STRING} &q=([^&]+)
 RewriteCond %{DOCUMENT_ROOT}/api/v1/search-data/%1.json -f
 RewriteRule ^api/v1/search /api/v1/search-data/%1.json? [END]
 
+# for http://clients3.google.com/generate_204
+RewriteRule ^generate_204$ /api/v1/status
+
 #this one wants a 204 status code
 RewriteRule ^api/v1/status$ - [R=204,L]
 
