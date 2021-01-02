@@ -19,6 +19,14 @@ RewriteRule ^api/v1/developers/(.+)/products/ /api/v1/developers/$1/products/%1.
 RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
 RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
 
+#if directoryslash is on, gamers gets redirected to gamers/ (dir index)
+<Files "/api/v1/gamers">
+    DirectorySlash off
+</Files>
+#TODO: Use that only for the api/v1/gamers path, not for all
+ErrorDocument 400 /api/v1/gamers/register-error.json
+RewriteRule ^api/v1/gamers$ /api/v1/gamers/register-error.json [R=400,END]
+
 #purchased games/products
 # active buy requests
 RewriteCond %{REQUEST_METHOD} POST

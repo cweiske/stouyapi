@@ -1,0 +1,11 @@
+{
+    "error": {
+        "message": "Validation errors occurred",
+        "code": 2006,
+        "data": {
+            "username": [
+                "Registration not available. Login instead."
+            ]
+        }
+    }
+}
