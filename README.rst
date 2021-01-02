@@ -38,7 +38,7 @@ Virtual host configuration::
   Script PUT /empty-json.php
   Script DELETE /api/v1/queued_downloads_delete.php
 
-``mod_actions`` need to be enabled for apache 2.4.
+``mod_actions`` and ``mod_expires`` need to be enabled for apache 2.4.
 
 The virtual host's document root needs to point to the ``www`` folder.
 

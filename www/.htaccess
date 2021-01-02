@@ -1,4 +1,10 @@
 RewriteEngine on
+RewriteBase /
+
+<Files "firmware_builds">
+    ExpiresActive On
+    ExpiresDefault "access plus 1 day"
+</Files>
 
 #rewrite details GET parameter
 RewriteCond %{QUERY_STRING} ^app=([^&]+)
@@ -20,12 +26,16 @@ RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
 RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
 
 #if directoryslash is on, gamers gets redirected to gamers/ (dir index)
-<Files "/api/v1/gamers">
-    DirectorySlash off
-</Files>
+# the ouya registration does not support redirects there
 #TODO: Use that only for the api/v1/gamers path, not for all
 ErrorDocument 400 /api/v1/gamers/register-error.json
 RewriteRule ^api/v1/gamers$ /api/v1/gamers/register-error.json [R=400,END]
+
+#prevent redirect from gamers/me to gamers/me/
+<Files "me">
+    DirectorySlash Off
+</Files>
+RewriteRule ^api/v1/gamers/me$ /api/v1/gamers/me.json [END]
 
 #purchased games/products
 # active buy requests
