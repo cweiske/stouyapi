@@ -1,5 +1,5 @@
 {
-    "result": [        
+    "result": [
         {
             "incremental": false,
             "filename": "OUYA-1.2.1427-r1.zip",
@@ -10,11 +10,11 @@
             "requiredUpto": "1.2.995",
             "changes": null,
             "changesLocalized": {
-                "de": "no info",
+                "de": "v1.2.1427 \"Chickcharney Hotfix 2\" wurde am 2014-12-15 veröffentlich und ist die letzte offiziell erschienene Firmware.",
                 "it": "no info",
                 "fr": "no info",
                 "es": "no info",
-                "en": "no info"
+                "en": "v1.2.1427 \"Chickcharney Hotfix 2\" was released on 2014-12-15 and is the last official firmware that was ever published."
             }
         }
     ]
