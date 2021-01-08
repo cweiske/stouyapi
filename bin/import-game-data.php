@@ -27,6 +27,11 @@ if (file_exists($cfgFile)) {
 
 $wwwDir = __DIR__ . '/../www/';
 
+$qrDir = $wwwDir . 'gen-qr/';
+if (!is_dir($qrDir)) {
+    mkdir($qrDir, 0775);
+}
+
 $baseDir   = dirname($foldersFile);
 $gameFiles = [];
 foreach (file($foldersFile) as $line) {
@@ -879,6 +884,25 @@ function addMissingGameProperties($game)
     }
     if (!isset($game->developer->founder)) {
         $game->developer->founder = false;
+    }
+
+    if ($game->website) {
+        $qrfileName = preg_replace('#[^\\w\\d._-]#', '_', $game->website) . '.png';
+        $qrfilePath = $GLOBALS['qrDir'] . $qrfileName;
+        if (!file_exists($qrfilePath)) {
+            $cmd = __DIR__ . '/create-qr.sh'
+                 . ' ' . escapeshellarg($game->website)
+                 . ' ' . escapeshellarg($qrfilePath);
+            passthru($cmd, $retval);
+            if ($retval != 0) {
+                exit(20);
+            }
+        }
+        $qrUrlPath = '/gen-qr/' . $qrfileName;
+        $game->media[] = (object) [
+            'type' => 'image',
+            'url'  => $qrUrlPath,
+        ];
     }
 }
 

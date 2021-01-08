@@ -10,3 +10,4 @@ www/api/v1/games/*/
 www/api/v1/search-data/
 www/discover/
 www/game/
+www/gen-qr/
