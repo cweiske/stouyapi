@@ -46,6 +46,7 @@ rm tmp-qr.png
 exiftool\
     -quiet\
     -ignoreMinorErrors\
+    -overwrite_original\
     -PNG:Software=stouyapi\
     -PNG:Title="$url"\
     "$filename"

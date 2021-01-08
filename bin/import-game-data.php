@@ -898,7 +898,7 @@ function addMissingGameProperties($game)
                 exit(20);
             }
         }
-        $qrUrlPath = '/gen-qr/' . $qrfileName;
+        $qrUrlPath = $GLOBALS['baseUrl'] . 'gen-qr/' . $qrfileName;
         $game->media[] = (object) [
             'type' => 'image',
             'url'  => $qrUrlPath,

@@ -3,6 +3,8 @@
  * Optional configuration file for import-game-data.php
  * Copy it to config.php and adjust it.
  */
+$GLOBALS['baseUrl'] = 'http://ouya.cweiske.de/';
+
 $GLOBALS['urlRewrites'] = [
     '#^https://archive.org/download/#' => 'http://statics.ouya.world/ia/',
 ];
