@@ -30,14 +30,14 @@ qrencode -s 20 -o tmp-qr.png "$url"
 
 convert\
     -filter point -resize 1260x580\
-    -background white\
+    -background '#1a1a1a'\
     tmp-qr.png\
     -size 1260x120\
-    -fill black\
+    -fill '#dad9d9'\
     -gravity south\
     label:"$url"\
     -append\
-    -bordercolor white\
+    -bordercolor '#1a1a1a'\
     -border 10\
     "$filename"
 
