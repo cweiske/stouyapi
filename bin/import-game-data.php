@@ -431,7 +431,7 @@ function buildAppDownload($game, $release)
             'fileSize'      => $release->size,
             'version'       => $release->uuid,
             'contentRating' => $game->contentRating,
-            'downloadLink'  => rewriteUrl($release->url),
+            'downloadLink'  => $release->url,
         ]
     ];
 }
@@ -903,6 +903,15 @@ function addMissingGameProperties($game)
             'type' => 'image',
             'url'  => $qrUrlPath,
         ];
+    }
+
+    //rewrite urls from Internet Archive to our servers
+    $game->discover = rewriteUrl($game->discover);
+    foreach ($game->media as $medium) {
+        $medium->url = rewriteUrl($medium->url);
+    }
+    foreach ($game->releases as $release) {
+        $release->url = rewriteUrl($release->url);
     }
 }
 
