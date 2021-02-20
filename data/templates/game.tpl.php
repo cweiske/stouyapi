@@ -7,6 +7,9 @@
   <meta name="author" content="<?= htmlspecialchars($json->developer->name) ?>"/>
   <link rel="stylesheet" type="text/css" href="../ouya-game.css"/>
   <link rel="icon" href="../favicon.ico"/>
+  <meta property="og:title" content="<?= htmlspecialchars($json->title); ?>" />
+  <meta property="og:description" content="<?= htmlspecialchars(substr(strtok($json->description, '.!'), 0, 200)); ?>." />
+  <meta property="og:image" content="<?= htmlspecialchars($json->tileImage); ?>" />
  </head>
  <body class="game">
   <header>
