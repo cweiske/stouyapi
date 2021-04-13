@@ -12,7 +12,7 @@
  <body class="allgames">
   <header>
    <h1>List of all OUYA games</h1>
-   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
+   <a href="/discover/"><img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/></a>
   </header>
 
   <table id="allouyagames" class="display">
