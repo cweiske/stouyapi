@@ -13,7 +13,7 @@
  </head>
  <body class="game">
   <header>
-   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
+   <a href="/discover/"><img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/></a>
   </header>
   <section class="text">
    <h1><?= htmlspecialchars($json->title); ?></h1>
