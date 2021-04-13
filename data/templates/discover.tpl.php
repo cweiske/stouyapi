@@ -10,7 +10,7 @@
  <body class="discover">
   <header>
    <h1><?= htmlspecialchars($json->title); ?></h1>
-   <img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/>
+   <a href="/discover/"><img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/></a>
   </header>
 
   <?php foreach ($sections as $section): ?>
