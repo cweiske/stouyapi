@@ -5,7 +5,7 @@
       "timestamp": "1400714704",
       "md5sum": "ed9f1712988c5ec2033f44fabe8e6297",
       "channel": "stable",
-      "url": "http://cds.t2z5c2q6.hwcdn.net/ota/RC-OUYA-1.2.1084-r1_ota.zip",
+      "url": "http://devs-ouya-tv-prod.s3.amazonaws.com/ota/RC-OUYA-1.2.1084-r1_ota.zip",
       "requiredUpto": "1.2.995",
       "changes": "https://devs.ouya.tv/api/changelog/ed9f1712988c5ec2033f44fabe8e6297.txt",
       "changesLocalized": {
