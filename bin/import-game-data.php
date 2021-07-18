@@ -175,8 +175,8 @@ function buildDiscover(array $games)
         filterLastAdded($games, 10)
     );
     addDiscoverRow(
-        $data, 'Best rated',
-        filterBestRated($games, 10),
+        $data, 'Best rated games',
+        filterBestRatedGames($games, 10),
         true
     );
 
@@ -191,6 +191,7 @@ function buildDiscover(array $games)
         $data, 'Special',
         [
             'Best rated',
+            'Best rated games',
             'Most rated',
             'Random',
             'Last updated',
@@ -199,6 +200,10 @@ function buildDiscover(array $games)
     writeJson(
         'api/v1/discover-data/' . categoryPath('Best rated') . '.json',
         buildSpecialCategory('Best rated', filterBestRated($games, 99))
+    );
+    writeJson(
+        'api/v1/discover-data/' . categoryPath('Best rated games') . '.json',
+        buildSpecialCategory('Best rated games', filterBestRatedGames($games, 99))
     );
     writeJson(
         'api/v1/discover-data/' . categoryPath('Most rated') . '.json',

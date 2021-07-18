@@ -117,6 +117,14 @@ function filterBestRated($origGames, $limit)
     return array_slice($games, 0, $limit);
 }
 
+function filterBestRatedGames($origGames, $limit)
+{
+    $noApps = filterByGenre($origGames, 'App', true);
+    $noAppsNoEmus = filterByGenre($noApps, 'Emulator', true);
+
+    return filterBestRated($noAppsNoEmus, $limit);
+}
+
 function filterMostDownloaded($origGames, $limit)
 {
     $games = array_values($origGames);
