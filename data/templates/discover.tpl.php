@@ -9,7 +9,7 @@
  </head>
  <body class="discover">
   <header>
-   <h1><?= htmlspecialchars($json->title); ?></h1>
+   <h1><?= htmlspecialchars($json->title); ?><?php if($subtitle) { echo ': ' . $subtitle; } ?></h1>
    <a href="./"><img class="ouyalogo" src="../ouya-logo.grey.svg" alt="OUYA logo" width="50"/></a>
   </header>
 

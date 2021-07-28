@@ -92,6 +92,8 @@ function renderDiscoverFile($discoverFile)
     $json = json_decode(file_get_contents($discoverFile));
 
     $title    = $json->title . ' OUYA games';
+    $subtitle = $json->stouyapi->subtitle ?? null;
+
     $sections = [];
     foreach ($json->rows as $row) {
         $section = (object) [

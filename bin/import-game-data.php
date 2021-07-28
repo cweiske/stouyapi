@@ -19,6 +19,7 @@ if (!is_file($foldersFile)) {
 
 //default configuration values
 $GLOBALS['baseUrl']      = 'http://ouya.cweiske.de/';
+$GLOBALS['categorySubtitles'] = [];
 $GLOBALS['packagelists'] = [];
 $GLOBALS['urlRewrites']  = [];
 $cfgFile = __DIR__ . '/../config.php';
@@ -290,6 +291,9 @@ function buildDiscoverCategory($name, $games)
         'rows'  => [],
         'tiles' => [],
     ];
+    if (isset($GLOBALS['categorySubtitles'][$name])) {
+        $data['stouyapi']['subtitle'] = $GLOBALS['categorySubtitles'][$name];
+    }
 
     if (count($games) >= 20) {
         addDiscoverRow(

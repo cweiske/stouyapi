@@ -31,3 +31,9 @@ $GLOBALS['home']['2020 Winter GameJam'] = [
     'tv.ouya.win.unity.brokenbeauty',
 ];
 $GLOBALS['pushToMyOuyaUrl'] = '../push-to-my-ouya.php';
+
+$GLOBALS['categorySubtitles'] = [
+    'Exclusive' => 'Only available on the OUYA',
+    'Unlocked' => 'Official OUYA shutdown releases',
+    'VIP Room' => 'Once exclusive on the OUYA',
+];
