@@ -290,15 +290,18 @@ function buildDiscoverCategory($name, $games)
         'rows'  => [],
         'tiles' => [],
     ];
-    addDiscoverRow(
-        $data, 'Last Updated',
-        filterLastUpdated($games, 10)
-    );
-    addDiscoverRow(
-        $data, 'Best rated',
-        filterBestRated($games, 10),
-        true
-    );
+
+    if (count($games) >= 20) {
+        addDiscoverRow(
+            $data, 'Last Updated',
+            filterLastUpdated($games, 10)
+        );
+        addDiscoverRow(
+            $data, 'Best rated',
+            filterBestRated($games, 10),
+            true
+        );
+    }
 
     $games = sortByTitle($games);
     $chunks = array_chunk($games, 4);
