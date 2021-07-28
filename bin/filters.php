@@ -31,7 +31,7 @@ function filterByLetter($origGames, $letter)
 {
     $filtered = [];
     foreach ($origGames as $game) {
-        $gameLetter = strtoupper($game->title{0});
+        $gameLetter = strtoupper($game->title[0]);
         if (!preg_match('#^[A-Z]$#', $gameLetter)) {
             $gameLetter = 'Other';
         }

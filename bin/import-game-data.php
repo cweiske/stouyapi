@@ -18,6 +18,7 @@ if (!is_file($foldersFile)) {
 }
 
 //default configuration values
+$GLOBALS['baseUrl']      = 'http://ouya.cweiske.de/';
 $GLOBALS['packagelists'] = [];
 $GLOBALS['urlRewrites']  = [];
 $cfgFile = __DIR__ . '/../config.php';
