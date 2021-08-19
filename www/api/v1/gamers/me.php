@@ -41,7 +41,7 @@ if ($row === false) {
 $data = json_decode(file_get_contents('me.json'));
 $data->gamer->username = $row['username'];
 
-switch ($row['username']) {
+switch (strtolower($row['username'])) {
 case 'cweiske':
 case 'szeraax':
     $data->gamer->founder = true;
