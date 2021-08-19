@@ -30,6 +30,8 @@ OUYA setup
 2. Enter any username, leave password empty. Continue.
 3. Skip credit card registration
 
+The username will appear on your ouya main screen.
+
 
 Apache setup
 ============

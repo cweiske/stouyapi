@@ -1,5 +1,6 @@
 /config.php
 /data/push-to-my-ouya.sqlite3
+/data/usernames.sqlite3
 /README.html
 www/api/v1/apps/
 www/api/v1/details-data/
