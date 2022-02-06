@@ -525,11 +525,18 @@ function buildDetails($game, $linkDeveloperPage = false)
         $iaUrl = dirname($game->latestRelease->url) . '/';
     }
 
+    $description = $game->description;
+    if (isset($game->notes) && trim($game->notes)) {
+        $description = "Technical notes:\r\n" . $game->notes
+            . "\r\n----\r\n"
+            . $description;
+    }
+
     // http://cweiske.de/ouya-store-api-docs.htm#get-https-devs-ouya-tv-api-v1-details
     $data = [
         'type'             => 'Game',
         'title'            => $game->title,
-        'description'      => $game->description,
+        'description'      => $description,
         'gamerNumbers'     => $game->players,
         'genres'           => $game->genres,
 
