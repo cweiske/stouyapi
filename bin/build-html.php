@@ -31,7 +31,7 @@ foreach (glob($gameDetailsDir . '*.json') as $gameDataFile) {
     $htmlFile = basename($gameDataFile, '.json') . '.htm';
     file_put_contents(
         $wwwGameDir . $htmlFile,
-        renderGameFile($gameDataFile)
+        renderGameFile($gameDataFile, 'game/' . $htmlFile)
     );
 }
 
@@ -42,17 +42,17 @@ foreach (glob($discoverDir . '*.json') as $discoverFile) {
     }
     file_put_contents(
         $wwwDiscoverDir . $htmlFile,
-        renderDiscoverFile($discoverFile)
+        renderDiscoverFile($discoverFile, 'discover/' . $htmlFile)
     );
 }
 
 file_put_contents(
     $wwwDiscoverDir . 'allgames.htm',
-    renderAllGamesList(glob($gameDetailsDir . '*.json'))
+    renderAllGamesList(glob($gameDetailsDir . '*.json'), 'discover/allgames.htm')
 );
 
 
-function renderAllGamesList($detailsFiles)
+function renderAllGamesList($detailsFiles, $path)
 {
     $games = [];
     foreach ($detailsFiles as $gameDataFile) {
@@ -77,6 +77,7 @@ function renderAllGamesList($detailsFiles)
     $navLinks = [
         './' => 'back',
     ];
+    $canonicalUrl = $GLOBALS['baseUrl'] . $path;
 
     $allGamesTemplate = __DIR__ . '/../data/templates/allgames.tpl.php';
     ob_start();
@@ -87,7 +88,7 @@ function renderAllGamesList($detailsFiles)
     return $html;
 }
 
-function renderDiscoverFile($discoverFile)
+function renderDiscoverFile($discoverFile, $path)
 {
     $json = json_decode(file_get_contents($discoverFile));
 
@@ -140,6 +141,11 @@ function renderDiscoverFile($discoverFile)
         $navLinks['./'] = 'discover';
     }
 
+    if ($path === 'discover/index.htm') {
+        $path = 'discover/';
+    }
+    $canonicalUrl = $GLOBALS['baseUrl'] . $path;
+
     $discoverTemplate = __DIR__ . '/../data/templates/discover.tpl.php';
     ob_start();
     include $discoverTemplate;
@@ -149,7 +155,7 @@ function renderDiscoverFile($discoverFile)
     return $html;
 }
 
-function renderGameFile($gameDataFile)
+function renderGameFile($gameDataFile, $path)
 {
     $json = json_decode(file_get_contents($gameDataFile));
 
@@ -180,6 +186,7 @@ function renderGameFile($gameDataFile)
 
     $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
     $developerUrl       = $json->stouyapi->{'developer-url'} ?? null;
+    $canonicalUrl       = $GLOBALS['baseUrl'] . $path;
 
     $pushUrl = $GLOBALS['pushToMyOuyaUrl']
         . '?game=' . urlencode($json->apk->package);

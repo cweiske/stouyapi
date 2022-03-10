@@ -7,6 +7,7 @@
   <meta name="author" content="<?= htmlspecialchars($json->developer->name) ?>"/>
   <link rel="stylesheet" type="text/css" href="../ouya-game.css"/>
   <link rel="icon" href="../favicon.ico"/>
+  <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>"/>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta property="og:title" content="<?= htmlspecialchars($json->title); ?>" />
   <meta property="og:description" content="<?= htmlspecialchars(substr(strtok($json->description, '.!'), 0, 200)); ?>." />

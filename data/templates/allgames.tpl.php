@@ -8,6 +8,7 @@
   <link rel="stylesheet" type="text/css" href="../datatables/jquery.dataTables.yadcf.css"/>
   <link rel="stylesheet" type="text/css" href="../ouya-allgames.css"/>
   <link rel="icon" href="../favicon.ico"/>
+  <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>"/>
  </head>
  <body class="allgames">
   <header>

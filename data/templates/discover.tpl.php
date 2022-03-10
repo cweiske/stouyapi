@@ -6,6 +6,7 @@
   <meta name="generator" content="stouyapi"/>
   <link rel="stylesheet" type="text/css" href="../ouya-discover.css"/>
   <link rel="icon" href="../favicon.ico"/>
+  <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>"/>
  </head>
  <body class="discover">
   <header>
