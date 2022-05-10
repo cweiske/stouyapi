@@ -9,13 +9,30 @@
 ini_set('xdebug.halt_level', E_WARNING|E_NOTICE|E_USER_WARNING|E_USER_NOTICE);
 require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/filters.php';
-if (!isset($argv[1])) {
+
+//command line option parsing
+$optind = null;
+$opts = getopt('h', ['help', 'noqr'], $optind);
+$args = array_slice($argv, $optind);
+
+if (isset($opts['help']) || isset($opts['h'])) {
+    echo "Import games from a OUYA game data repository\n";
+    echo "\n";
+    echo "Usage: import-game-data.php [--noqr] [--help|-h]\n";
+    echo " --noqr  Do not generate and link QR code images\n";
+    exit(0);
+}
+
+if (!isset($args[0])) {
     error('Pass the path to a "folders" file with game data json files folder names');
 }
-$foldersFile = $argv[1];
+$foldersFile = $args[0];
 if (!is_file($foldersFile)) {
     error('Given path is not a file: ' . $foldersFile);
 }
+
+$cfgEnableQr = !isset($opts['noqr']);
+
 
 //default configuration values
 $GLOBALS['baseUrl']      = 'http://ouya.cweiske.de/';
@@ -29,9 +46,11 @@ if (file_exists($cfgFile)) {
 
 $wwwDir = __DIR__ . '/../www/';
 
-$qrDir = $wwwDir . 'gen-qr/';
-if (!is_dir($qrDir)) {
-    mkdir($qrDir, 0775);
+if ($cfgEnableQr) {
+    $qrDir = $wwwDir . 'gen-qr/';
+    if (!is_dir($qrDir)) {
+        mkdir($qrDir, 0775);
+    }
 }
 
 $baseDir   = dirname($foldersFile);
@@ -824,6 +843,8 @@ function getAllGenres($games)
 
 function addMissingGameProperties($game)
 {
+    global $cfgEnableQr;
+
     if (!isset($game->overview)) {
         $game->overview = null;
     }
@@ -913,7 +934,7 @@ function addMissingGameProperties($game)
         $game->developer->founder = false;
     }
 
-    if ($game->website) {
+    if ($cfgEnableQr && $game->website) {
         $qrfileName = preg_replace('#[^\\w\\d._-]#', '_', $game->website) . '.png';
         $qrfilePath = $GLOBALS['qrDir'] . $qrfileName;
         if (!file_exists($qrfilePath)) {
