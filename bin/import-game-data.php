@@ -50,6 +50,13 @@ foreach (file($foldersFile) as $line) {
     }
 }
 
+//store git repository version of last folder
+$workdir = getcwd();
+chdir($folder);
+$gitDate = `git log --max-count=1 --format="%h %cI"`;
+chdir($workdir);
+file_put_contents($wwwDir . '/game-data-version', $gitDate);
+
 $games = [];
 $count = 0;
 $developers = [];
