@@ -12,13 +12,14 @@ require_once __DIR__ . '/filters.php';
 
 //command line option parsing
 $optind = null;
-$opts = getopt('h', ['help', 'noqr'], $optind);
+$opts = getopt('h', ['help', 'mini', 'noqr'], $optind);
 $args = array_slice($argv, $optind);
 
 if (isset($opts['help']) || isset($opts['h'])) {
     echo "Import games from a OUYA game data repository\n";
     echo "\n";
-    echo "Usage: import-game-data.php [--noqr] [--help|-h]\n";
+    echo "Usage: import-game-data.php [--mini] [--noqr] [--help|-h]\n";
+    echo " --mini  Generate small but ugly JSON files\n";
     echo " --noqr  Do not generate and link QR code images\n";
     exit(0);
 }
@@ -31,6 +32,7 @@ if (!is_file($foldersFile)) {
     error('Given path is not a file: ' . $foldersFile);
 }
 
+$cfgMini     = isset($opts['mini']);
 $cfgEnableQr = !isset($opts['noqr']);
 
 
@@ -1056,15 +1058,19 @@ function rewriteUrl($url)
 
 function writeJson($path, $data)
 {
-    global $wwwDir;
+    global $cfgMini, $wwwDir;
     $fullPath = $wwwDir . $path;
     $dir = dirname($fullPath);
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
+    $opts = JSON_UNESCAPED_SLASHES;
+    if (!$cfgMini) {
+        $opts |= JSON_PRETTY_PRINT;
+    }
     file_put_contents(
         $fullPath,
-        json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+        json_encode($data, $opts) . "\n"
     );
 }
 
