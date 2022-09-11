@@ -1,0 +1,38 @@
+{
+    "actions": [
+        {
+            "action": "installFile",
+            "packageName": "tv.ouya.oobe",
+            "friendlyName": "OUYA OOBE",
+            "md5": "41d50891225591fdd32045ed0821a3bf",
+            "filesize": 7725861,
+            "downloadUrl": "http://ouya.cweiske.de/apks/ouya-everywhere/tv.ouya.oobe-1.2.897.apk",
+            "versionCode": 10200897
+        },
+
+        {
+            "action": "installFile",
+            "packageName": "tv.ouya",
+            "friendlyName": "OUYA Framework",
+            "md5": "95d987e7b100c2c72bdac37a8eda2647",
+            "filesize": 3123639,
+            "downloadUrl": "http://ouya.cweiske.de/apks/ouya-everywhere/tv.ouya-1.2.897.apk",
+            "versionCode": 10200897
+        },
+
+        {
+            "action": "installFile",
+            "packageName": "tv.ouya.console",
+            "friendlyName": "OUYA launcher",
+            "md5": "97da25989c64a90c60070978077fff55",
+            "filesize": 18953944,
+            "downloadUrl": "http://ouya.cweiske.de/apks/ouya-everywhere/tv.ouya.console-1.2.897.apk",
+            "versionCode": 10200897
+        },
+
+        {
+            "action": "launch",
+            "packageName": "tv.ouya.console"
+        }
+    ]
+}
