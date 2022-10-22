@@ -890,6 +890,9 @@ function addMissingGameProperties($game)
     $firstReleaseTimestamp  = null;
     $latestReleaseTimestamp = 0;
     foreach ($game->releases as $release) {
+        if (isset($release->broken) && $release->broken) {
+            continue;
+        }
         if (!isset($release->publicSize)) {
             $release->publicSize = 0;
         }
