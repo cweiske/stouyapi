@@ -1,3 +1,7 @@
+#no iso-2022-cn charset for "com.cis.ouya.oth.htm"
+#"RemoveCharset" does not work, so we have to override with AddCharset
+AddCharset UTF-8 .iso2022-cn .cis
+
 RewriteEngine on
 RewriteBase /
 
