@@ -40,9 +40,34 @@ Virtual host configuration::
   Script PUT /empty-json.php
   Script DELETE /api/v1/queued_downloads_delete.php
 
-``mod_actions`` and ``mod_expires`` need to be enabled for apache 2.4.
+  <Directory "/path/to/stouyapi/www">
+    AllowOverride All
+  </Directory>
+
+``mod_actions``, ``mod_expires`` and ``mod_php`` (or php-fpm) need to be enabled
+for Apache 2.4.
 
 The virtual host's document root needs to point to the ``www`` folder.
+
+
+Test your Apache setup
+----------------------
+::
+
+   # check if normal API routes work
+   $ curl -I http://stouyapi.cwboo/api/firmware_builds
+   HTTP/1.1 200 OK
+   [...]
+
+   # check if rewritten API routes work
+   $ curl -I http://stouyapi.cwboo/api/v1/discover/discover
+   HTTP/1.1 200 OK
+   [...]
+
+   # check if PHP routes work
+   curl -I http://stouyapi.cwboo/api/v1/gamers/me
+   HTTP/1.1 200 OK
+   [...]
 
 
 Building API data
