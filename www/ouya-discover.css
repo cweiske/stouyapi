@@ -67,6 +67,7 @@ a {
 }
 .tile img {
     width: 20vw;
+    height: auto;
 }
 h3 {
     margin: 0;
