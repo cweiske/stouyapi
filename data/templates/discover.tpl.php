@@ -25,7 +25,7 @@
     <section class="tile<?= ($tile->thumb == '') ? ' noimg' : '' ?>">
      <h3 class="title"><a href="<?= htmlspecialchars($tile->detailUrl) ?>"><?= htmlspecialchars($tile->title) ?></a></h3>
      <?php if ($tile->thumb != ''): ?>
-     <a href="<?= htmlspecialchars($tile->detailUrl) ?>"><img src="<?= htmlspecialchars($tile->thumb) ?>" alt="Screenshot of <?= htmlspecialchars($tile->detailUrl) ?>"/></a>
+     <a href="<?= htmlspecialchars($tile->detailUrl) ?>"><img src="<?= htmlspecialchars($tile->thumb) ?>" alt="Screenshot of <?= htmlspecialchars($tile->title) ?>" width="732" height="412"/></a>
      <?php endif ?>
      <?php if ($tile->type == 'app' && $tile->ratingCount > 0): ?>
      <p class="rating">
