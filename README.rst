@@ -37,15 +37,29 @@ Apache setup
 ============
 Virtual host configuration::
 
-  Script PUT /empty-json.php
-  Script DELETE /api/v1/queued_downloads_delete.php
+  <VirtualHost *:80>
+    ServerName stouyapi.test
+    DocumentRoot /path/to/stouyapi/www
 
-  <Directory "/path/to/stouyapi/www">
-    AllowOverride All
-  </Directory>
+    CustomLog /var/log/apache2/stouyapi-access.log combined
+    ErrorLog  /var/log/apache2/stouyapi-error.log
 
-``mod_actions``, ``mod_expires`` and ``mod_php`` (or php-fpm) need to be enabled
-for Apache 2.4.
+    Script PUT /empty-json.php
+    Script DELETE /api/v1/queued_downloads_delete.php
+
+    <Directory "/path/to/stouyapi/www">
+      AllowOverride All
+      Require all granted
+    </Directory>
+  </VirtualHost>
+
+The following modules need to be enabled in Apache 2.4
+(with e.g. ``a2enmod``):
+
+- ``actions``
+- ``expires``
+- ``php`` (or php-fpm via fastcgi)
+- ``rewrite``
 
 The virtual host's document root needs to point to the ``www`` folder.
 
