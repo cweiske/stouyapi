@@ -168,10 +168,16 @@ Now find a line that looks like below::
 
     DocumentRoot /var/www/html
 
-That line, with another one further down, basically tells apache where the site's files are. 
+That line basically tells apache where the site's files are. 
 I chose to leave my files in the following path::
 
     DocumentRoot /srv/stouyapi/www
+
+**ATTENTION: You can use any directory name you want, but 
+remember that the path you enter must be complete until the 
+folder that contains the files and folders on the server. 
+They are all those that are inside the www directory, inside 
+the stouyapi folder where we generate the API files and HTML files.**
 
 Now let's go to the end of the file, and before the line below::
 
@@ -272,9 +278,7 @@ To check if everything is ok, in the terminal::
     ##To check if PHP routes work, type:
     $ curl -I http://stouyapi.cwboo/api/v1/gamers/me
 
-All curl commands above should return "HTTP/1.1 200 OK" with some other information.
-
-If you type in your browser the ip address of your machine plus "/discover", it will open the local discover.
+All curl commands above should return ``HTTP/1.1 200 OK`` with some other information.
 
 5 - Configuring the files in the OUYA
 =====================================
