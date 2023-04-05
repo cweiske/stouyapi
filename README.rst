@@ -35,6 +35,11 @@ The username will appear on your ouya main screen.
 
 Apache setup
 ============
+
+.. note:: Step-by-step setup instructions can be found in
+          ``HOWTO-SETUP.rst``.
+
+
 Virtual host configuration::
 
   <VirtualHost *:80>
