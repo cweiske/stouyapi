@@ -37,7 +37,7 @@ Apache setup
 ============
 
 .. note:: Step-by-step setup instructions can be found in
-          ``HOWTO-SETUP.rst``.
+          `HOWTO-SETUP.rst <HOWTO-SETUP.rst>`__.
 
 
 Virtual host configuration::
