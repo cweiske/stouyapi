@@ -48,6 +48,10 @@ RewriteRule ^api/v1/sessions$ /api/v1/sessions.php [END]
 
 RewriteRule ^api/v1/gamers/me$ /api/v1/gamers/me.json [END]
 
+#partner builds
+RewriteCond %{HTTP_USER_AGENT} "razer/pearlyn/pearlyn"
+RewriteRule ^api/v1/partner_builds /api/v1/partner_builds.razer-forge-tv [END]
+
 #purchased games/products
 # active buy requests
 RewriteCond %{REQUEST_METHOD} POST

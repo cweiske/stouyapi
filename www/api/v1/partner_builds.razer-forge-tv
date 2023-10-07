@@ -1,0 +1,28 @@
+{
+    "actions": [
+        {
+            "action": "installFile",
+            "packageName": "tv.ouya",
+            "friendlyName": "Cortex Framework",
+            "md5": "697248296f967e428efc5c205c75d301",
+            "filesize": 6702855,
+            "downloadUrl": "http://ouya.cweiske.de/apks/razer-forge/CortexFramework-1.2.2320-tv.ouya.apk",
+            "versionCode": 10202320
+        },
+
+        {
+            "action": "installFile",
+            "packageName": "tv.ouya.console",
+            "friendlyName": "Razer Cortex",
+            "md5": "90637a8a5cbc937b3a11782838a3112d",
+            "filesize": 24220488,
+            "downloadUrl": "http://ouya.cweiske.de/apks/razer-forge/Razer_Cortex-1.2.2320-tv.ouya.console.apk",
+            "versionCode": 10202320
+        },
+
+        {
+            "action": "launch",
+            "packageName": "tv.ouya.console"
+        }
+    ]
+}
