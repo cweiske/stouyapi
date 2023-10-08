@@ -5,6 +5,9 @@
         "data": {
             "username": [
                 "Registration not available. Login instead."
+            ],
+            "email": [
+                "Registration not available - login instead. First part of login e-mail will be used as nickname."
             ]
         }
     }
