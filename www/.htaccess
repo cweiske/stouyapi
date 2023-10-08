@@ -44,7 +44,8 @@ RewriteRule ^api/v1/gamers$ /api/v1/gamers/register-error.json [R=400,END]
     DirectorySlash Off
 </Files>
 
-#Disable the next two lines to have static usernames only
+#Disable the next three lines to have static usernames only
+RewriteRule ^api/razer/session$ /api/razer/session.php [END]
 RewriteRule ^api/v1/gamers/me$ /api/v1/gamers/me.php [END]
 RewriteRule ^api/v1/sessions$ /api/v1/sessions.php [END]
 

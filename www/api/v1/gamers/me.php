@@ -6,6 +6,11 @@
  * @see    api/v1/sessions
  */
 $dbFile  = __DIR__ . '/../../../../data/usernames.sqlite3';
+$cfgFile = __DIR__ . '/../../../../config.php';
+if (file_exists($cfgFile)) {
+    include $cfgFile;
+}
+
 
 $ip = $_SERVER['REMOTE_ADDR'];
 if ($ip == '') {
@@ -40,13 +45,18 @@ if ($row === false) {
 
 $data = json_decode(file_get_contents('me.json'));
 $data->gamer->username = $row['username'];
+$data->gamer->nickname = $row['username'];
 
 switch (strtolower($row['username'])) {
 case 'cweiske':
+    $data->gamer->founder = true;
+    $data->gamer->avatar = $GLOBALS['baseUrl'] . 'avatars/cweiske.png';
+    break;
 case 'szeraax':
     $data->gamer->founder = true;
+    break;
 }
 
 header('Content-type: application/json');
-echo json_encode($data) . "\n";
+echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n";
 ?>

@@ -4,6 +4,8 @@
         "settings": {},
         "founder": false,
         "email": "stouyapi@example.org",
-        "username": "stouyapi"
+        "username": "stouyapi",
+        "nickname": "stouyapi",
+        "avatar": null
     }
 }
