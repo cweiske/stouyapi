@@ -172,7 +172,9 @@ foreach ($developers as $developer) {
     }
 }
 
-writeJson('api/v1/discover-data/discover.json', buildDiscover($games));
+$data = buildDiscover($games);
+writeJson('api/v1/discover-data/discover.json', $data);
+writeJson('api/v1/discover-data/discover.forge.json', convertCategoryToForge($data));
 writeJson('api/v1/discover-data/home.json', buildDiscoverHome($games));
 
 //make
@@ -227,26 +229,26 @@ function buildDiscover(array $games)
             'Last updated',
         ]
     );
-    writeJson(
+    writeCategoryJson(
         'api/v1/discover-data/' . categoryPath('Best rated') . '.json',
         buildSpecialCategory('Best rated', filterBestRated($games, 99))
     );
-    writeJson(
+    writeCategoryJson(
         'api/v1/discover-data/' . categoryPath('Best rated games') . '.json',
         buildSpecialCategory('Best rated games', filterBestRatedGames($games, 99))
     );
-    writeJson(
+    writeCategoryJson(
         'api/v1/discover-data/' . categoryPath('Most rated') . '.json',
         buildSpecialCategory('Most rated', filterMostDownloaded($games, 99))
     );
-    writeJson(
+    writeCategoryJson(
         'api/v1/discover-data/' . categoryPath('Random') . '.json',
         buildSpecialCategory(
             'Random ' . date('Y-m-d H:i'),
             filterRandom($games, 99)
         )
     );
-    writeJson(
+    writeCategoryJson(
         'api/v1/discover-data/' . categoryPath('Last updated') . '.json',
         buildSpecialCategory('Last updated', filterLastUpdated($games, 99))
     );
@@ -259,7 +261,7 @@ function buildDiscover(array $games)
     ];
     addDiscoverRow($data, 'Multiplayer', $players);
     foreach ($players as $num => $title) {
-        writeJson(
+        writeCategoryJson(
             'api/v1/discover-data/' . categoryPath($title) . '.json',
             buildDiscoverCategory(
                 $title,
@@ -280,7 +282,7 @@ function buildDiscover(array $games)
     natsort($ages);
     addDiscoverRow($data, 'Content rating', $ages);
     foreach ($ages as $num => $title) {
-        writeJson(
+        writeCategoryJson(
             'api/v1/discover-data/' . categoryPath($title) . '.json',
             buildDiscoverCategory($title, filterByAge($games, $title))
         );
@@ -291,7 +293,7 @@ function buildDiscover(array $games)
     addChunkedDiscoverRows($data, $genres, 'Genres');
 
     foreach ($genres as $genre) {
-        writeJson(
+        writeCategoryJson(
             'api/v1/discover-data/' . categoryPath($genre) . '.json',
             buildDiscoverCategory($genre, filterByGenre($games, $genre))
         );
@@ -300,7 +302,7 @@ function buildDiscover(array $games)
     $abc = array_merge(range('A', 'Z'), ['Other']);
     addChunkedDiscoverRows($data, $abc, 'Alphabetical');
     foreach ($abc as $letter) {
-        writeJson(
+        writeCategoryJson(
             'api/v1/discover-data/' . categoryPath($letter) . '.json',
             buildDiscoverCategory($letter, filterByLetter($games, $letter))
         );
@@ -325,7 +327,7 @@ function buildDiscoverCategory($name, $games)
 
     if (count($games) >= 20) {
         addDiscoverRow(
-            $data, 'Last Updated',
+            $data, 'Last updated',
             filterLastUpdated($games, 10)
         );
         addDiscoverRow(
@@ -337,9 +339,50 @@ function buildDiscoverCategory($name, $games)
 
     $games = sortByTitle($games);
     $chunks = array_chunk($games, 4);
+    $title = 'All';
     foreach ($chunks as $chunkGames) {
-        addDiscoverRow($data, '', $chunkGames);
+        addDiscoverRow($data, $title, $chunkGames);
+        $title = '';
     }
+
+    return $data;
+}
+
+/**
+ * Modify a category to make it suitable for the Razer Forge TV
+ *
+ * - Fold rows without title into the previous row
+ * - Remove automatically generated categories ("Last updated", "Best rated")
+ *
+ * @see buildDiscoverCategory()
+ */
+function convertCategoryToForge($data, $removeAutoCategories = false)
+{
+    //merge tiles from rows without title into the previous row
+    $lastTitleRowId = null;
+    foreach ($data['rows'] as $rowId => $row) {
+        if ($row['title'] !== '') {
+            $lastTitleRowId = $rowId;
+        } else if ($lastTitleRowId !== null) {
+            $data['rows'][$lastTitleRowId]['tiles'] = array_merge(
+                $data['rows'][$lastTitleRowId]['tiles'],
+                $row['tiles']
+            );
+            unset($data['rows'][$rowId]);
+        }
+    }
+
+    if ($removeAutoCategories) {
+        foreach ($data['rows'] as $rowId => $row) {
+            if ($row['title'] === 'Last updated'
+                || $row['title'] === 'Best rated'
+            ) {
+                unset($data['rows'][$rowId]);
+            }
+        }
+    }
+
+    $data['rows'] = array_values($data['rows']);
 
     return $data;
 }
@@ -1075,6 +1118,15 @@ function writeJson($path, $data)
         $fullPath,
         json_encode($data, $opts) . "\n"
     );
+}
+
+function writeCategoryJson($path, $data)
+{
+    writeJson($path, $data);
+
+    $forgePath = str_replace('.json', '.forge.json', $path);
+    $forgeData = convertCategoryToForge($data, true);
+    writeJson($forgePath, $forgeData);
 }
 
 function error($msg)

@@ -30,7 +30,18 @@ RewriteCond %{QUERY_STRING} &only=([^&]+)
 RewriteCond %{DOCUMENT_ROOT}/api/v1/developers/$1/products/%1.json -f
 RewriteRule ^api/v1/developers/(.+)/products/ /api/v1/developers/$1/products/%1.json? [END]
 
+#discover homepage
+RewriteCond %{HTTP_USER_AGENT} "Forge"
+RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.forge.json [END]
+
 RewriteRule ^api/v1/discover/?$ /api/v1/discover-data/discover.json [END]
+
+#discover category
+RewriteCond %{HTTP_USER_AGENT} "Forge"
+RewriteCond %{REQUEST_URI} ^/api/v1/discover/(.+)$
+RewriteCond %{DOCUMENT_ROOT}/api/v1/discover-data/$1.forge.json -f
+RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.forge.json [END]
+
 RewriteRule ^api/v1/discover/(.+)$ /api/v1/discover-data/$1.json [END]
 
 #if directoryslash is on, gamers gets redirected to gamers/ (dir index)
