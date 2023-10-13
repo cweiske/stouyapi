@@ -20,6 +20,13 @@ if ($ip == '') {
 }
 $ip = mapIp($ip);
 
+if (!isset($_GET['game'])) {
+    header('HTTP/1.0 400 Bad Request');
+    header('Content-type: text/plain');
+    echo 'Game parameter missing' . "\n";
+    exit(1);
+}
+
 $game = $_GET['game'];
 $cleanGame = preg_replace('#[^a-zA-Z0-9._]#', '', $game);
 if ($game != $cleanGame || $game == '') {
