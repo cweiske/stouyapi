@@ -16,8 +16,8 @@ OUYA config change
 - Create file ``ouya_config.properties``
 - Add::
 
-    OUYA_SERVER_URL=http://stouyapi.boo
-    OUYA_STATUS_SERVER_URL=http://stouyapi.boo/api/v1/status
+    OUYA_SERVER_URL=http://stouyapi.example.org
+    OUYA_STATUS_SERVER_URL=http://stouyapi.example.org/api/v1/status
 
 The changes should take effect immediately.
 If they do not, reboot the OUYA once.
@@ -43,7 +43,7 @@ Apache setup
 Virtual host configuration::
 
   <VirtualHost *:80>
-    ServerName stouyapi.test
+    ServerName stouyapi.example.org
     DocumentRoot /path/to/stouyapi/www
 
     CustomLog /var/log/apache2/stouyapi-access.log combined
@@ -74,17 +74,17 @@ Test your Apache setup
 ::
 
    # check if normal API routes work
-   $ curl -I http://stouyapi.cwboo/api/firmware_builds
+   $ curl -I http://stouyapi.example.org/api/firmware_builds
    HTTP/1.1 200 OK
    [...]
 
    # check if rewritten API routes work
-   $ curl -I http://stouyapi.cwboo/api/v1/discover/discover
+   $ curl -I http://stouyapi.example.org/api/v1/discover/discover
    HTTP/1.1 200 OK
    [...]
 
    # check if PHP routes work
-   curl -I http://stouyapi.cwboo/api/v1/gamers/me
+   curl -I http://stouyapi.example.org/api/v1/gamers/me
    HTTP/1.1 200 OK
    [...]
 
