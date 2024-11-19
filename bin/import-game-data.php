@@ -665,6 +665,7 @@ function buildDetails($game, $linkDeveloperPage = false)
         'stouyapi' => [
             'internet-archive' => $iaUrl,
             'developer-url'    => $game->developer->website ?? null,
+            'blockedInWebText' => $game->blockedInWebText ?? null,
         ]
     ];
 

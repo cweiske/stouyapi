@@ -186,6 +186,8 @@ function renderGameFile($gameDataFile, $path)
 
     $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
     $developerUrl       = $json->stouyapi->{'developer-url'} ?? null;
+    $blockedInWebText   = $json->stouyapi->blockedInWebText ?? null;
+    $blockedInWeb       = ($json->stouyapi->blockedInWebText ?? null) !== null;
     $canonicalUrl       = $GLOBALS['baseUrl'] . $path;
 
     $pushUrl = $GLOBALS['pushToMyOuyaUrl']

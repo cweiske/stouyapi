@@ -8,10 +8,12 @@
   <link rel="stylesheet" type="text/css" href="../ouya-game.css"/>
   <link rel="icon" href="../favicon.ico"/>
   <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>"/>
+  <?php if (!$blockedInWeb): ?>
   <meta name="twitter:card" content="summary_large_image"/>
   <meta property="og:title" content="<?= htmlspecialchars($json->title); ?>" />
   <meta property="og:description" content="<?= htmlspecialchars(substr(strtok($json->description, '.!'), 0, 200)); ?>." />
   <meta property="og:image" content="<?= htmlspecialchars($json->tileImage); ?>" />
+  <?php endif ?>
  </head>
  <body class="game">
   <header>
@@ -55,10 +57,15 @@
     <?php if ($json->inAppPurchases): ?>
     <strong>* Includes in-app purchases</strong><br/><br/>
     <?php endif ?>
-    <?= nl2br(htmlspecialchars($json->description)) ?>
+    <?php if ($blockedInWeb): ?>
+        <span class="blocked"><?= nl2br(htmlspecialchars($blockedInWebText)) ?></span>
+    <?php else: ?>
+        <?= nl2br(htmlspecialchars($json->description)) ?>
+    <?php endif ?>
    </p>
   </section>
 
+  <?php if (!$blockedInWeb): ?>
   <section class="media">
    <h2>Screenshots</h2>
    <div class="content">
@@ -73,10 +80,11 @@
     <?php endforeach ?>
    </div>
   </section>
+  <?php endif ?>
 
   <section class="buttons">
    <h2>Links</h2>
-   <?php if ($apkDownloadUrl): ?>
+   <?php if (!$blockedInWeb && $apkDownloadUrl): ?>
    <div>
     <a href="<?= $apkDownloadUrl ?>">Download .apk</a>
     <p>
@@ -85,7 +93,7 @@
     </p>
    </div>
    <?php endif ?>
-   <?php if ($internetArchiveUrl): ?>
+   <?php if (!$blockedInWeb && $internetArchiveUrl): ?>
    <div>
     <a href="<?= $internetArchiveUrl ?>">Internet Archive</a>
    </div>
