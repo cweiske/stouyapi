@@ -27,15 +27,13 @@ accept the fonts EULA and continue with the installation.
 
 To run the server, you need to install the following packages:
 
-- apache
-- php (*)
+- apache2
+- libapache2-mod-php
 - php-sqlite
 
-(*) When installed, it already activates the necessary module in apache.
+To install the packages on Pop-OS/Debian, just use the following command::
 
-To install the packages on Pop-OS, just use the following command::
-
-    # apt install imagemagick exiftool qrencode ttf-mscorefonts-installer apache2 php php-sqlite3
+    # apt install imagemagick exiftool qrencode ttf-mscorefonts-installer apache2 libapache2-mod-php php-sqlite3
 
 **ATTENTION: The above listing is not definitive and may vary if you use another
 distro such as Fedora, CentOS, etc. Make sure you have the package installed on
@@ -47,11 +45,17 @@ your distribution.**
 
 First download the stouyapi code and files to your computer.
 
+.. note::
+   Using ``/srv/`` as base directory is just an example. You can put the
+   code anywhere you want; just make sure to use your path in all
+   configuration files.
+
 In a terminal, type::
 
+    $ cd /srv/
     $ git clone https://github.com/cweiske/stouyapi.git
 
-This will create the stouyapi directory.
+This will create the ``stouyapi`` directory.
 
 Now enter in the stouyapi directory and download the ouya-game-data code and files::
 
