@@ -19,6 +19,11 @@ RewriteCond %{QUERY_STRING} ^app=([^&]+)
 RewriteCond %{DOCUMENT_ROOT}/api/v1/details-data/%1.json -f
 RewriteRule ^api/v1/details /api/v1/details-data/%1.json? [END]
 
+#details bundle page
+RewriteCond %{QUERY_STRING} page=([^&]+)
+RewriteCond %{DOCUMENT_ROOT}/api/v1/details-data/%1.json -f
+RewriteRule ^api/v1/details /api/v1/details-data/%1.json? [END]
+
 # details for unknown apps. Also see .htaccess in the dummy dir
 RewriteRule ^api/v1/details /api/v1/details-dummy/404? [END]
 

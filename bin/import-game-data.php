@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 /**
- * Import games from a OUYA game data repository
+ * Import games from a OUYA game data repository and generate static API files
  *
  * @link https://github.com/cweiske/ouya-game-data/
  * @author Christian Weiske <cweiske@cweiske.de>
@@ -120,6 +120,21 @@ foreach ($games as $game) {
             count($developers[$game->developer->uuid]['gameNames']) > 1
         )
     );
+    if ($game->relationships->launcher ?? false) {
+        //yes, this is no UUID. Should work anyway.
+        $game->launcherBundleUuid = $game->packageName . '-lb';
+        if (!isset($game->relationshipObjects)) {
+            $game->relationshipObjects = (object) [];
+        }
+        $game->relationshipObjects->launcher = $games[$game->relationships->launcher];
+        writeJson(
+            'api/v1/details-data/' . $game->launcherBundleUuid . '.json',
+            buildDetailsLauncherBundle(
+                $game,
+                $games[$game->relationships->launcher]
+            )
+        );
+    }
 
     writeJson(
         'api/v1/games/' . $game->packageName . '/purchases',
@@ -455,6 +470,8 @@ function buildDiscoverHome(array $games)
 
 /**
  * Build api/v1/apps/$packageName
+ *
+ * Detail page in discover store
  */
 function buildApps($game)
 {
@@ -540,8 +557,10 @@ function buildProduct($product)
 
 /**
  * Build /app/v1/details?app=org.example.game
+ *
+ * Detail page for already installed game.
  */
-function buildDetails($game, $linkDeveloperPage = false)
+function buildDetails($game, $linkDeveloperPage = false): array
 {
     $latestRelease = $game->latestRelease;
 
@@ -677,6 +696,86 @@ function buildDetails($game, $linkDeveloperPage = false)
     return $data;
 }
 
+/**
+ * Build /app/v1/details?page=org.example.game-lb
+ *
+ * Launcher bundle detail page (GameStick game + launcher)
+ */
+function buildDetailsLauncherBundle(object $game, object $launcher): array
+{
+    $gameDetails     = buildDetails($game, false);
+    $launcherDetails = buildDetails($launcher, false);
+
+    $promotedProduct = getPromotedProduct($game);
+
+    $data = [
+        'title'       => $game->title . ' LB',
+        'description' => "GameStick game + OUYA launcher\n\n" . $game->description,
+        'muted'       => true,//???
+
+        'metaData' => [
+            $game->title,
+            $launcher->title,
+        ],
+        'mediaTiles' => $gameDetails['mediaTiles'],
+
+        'apps' => [],
+        'buttons' => [],
+
+        'bundle' => [
+            'apps' => [
+                buildDetailsLauncherBundleApp($game),
+                buildDetailsLauncherBundleApp($launcher),
+            ],
+            'currency'      => $promotedProduct->currency ?? 'EUR',
+            'price'         => $promotedProduct->originalPrice ?? 0,
+            'contentRating' => $game->contentRating,
+            'purchased'     => true,
+            'games' => [
+                $game->packageName,
+                $launcher->packageName,
+            ],
+            'purchaseUrl' => 'ouya://launcher/purchase?developer=' . $launcher->developer->uuid . '&product=' . $game->launcherBundleUuid,
+        ],
+    ];
+
+    return $data;
+}
+
+/**
+ * Build a bundle->app[] entry for a game bundle detail page
+ */
+function buildDetailsLauncherBundleApp(object $game): array
+{
+    $latestRelease = $game->latestRelease;
+    return [
+        'gamerNumbers' => $game->players,
+        'genres'       => $game->genres,
+        'url' => 'ouya://launcher/details?app=' . $game->packageName,
+        'latestVersion' => [
+            'versionNumber' => $latestRelease->name,
+            'uuid'          => $latestRelease->uuid,
+            'apk'           => [
+                'md5sum'    => $latestRelease->md5sum,
+            ],
+        ],
+        'inAppPurchases'  => $game->inAppPurchases,
+        'promotedProduct' => buildProduct(getPromotedProduct($game)),
+        'premium'         => $game->premium,
+        'type'            => 'app',
+        'package'         => $game->packageName,
+        'updated_at' => strtotime($latestRelease->date),
+        'updatedAt' => $latestRelease->date,
+        'title' => $game->title,
+        'image' => $game->discover,
+        'contentRating' => $game->contentRating,
+        'rating' => [
+            'count'   => $game->rating->count,
+            'average' => $game->rating->average,
+        ],
+    ];
+}
+
 function buildDeveloperCurrentGamer()
 {
     return [
@@ -799,14 +898,23 @@ function addDiscoverRow(&$data, $title, $games, $ranked = false)
             $tilePos = count($data['tiles']);
             $data['tiles'][$tilePos] = buildDiscoverCategoryTile($game);
 
+        } elseif ($game->relationships->launcher ?? false) {
+            //gamestick game with a launcher - link bundle
+            $tilePos = findBundleTile($data['tiles'], $game->launcherBundleUuid);
+            $launcher = $game->relationshipObjects->launcher;
+            if ($tilePos === null) {
+                $tilePos = count($data['tiles']);
+                $data['tiles'][$tilePos] = buildDiscoverBundleTile($game, $launcher);
+            }
+
         } else {
             //game
-            if (isset($game->links->original)) {
-                //do not link unlocked games.
-                // people an access them via the original games
+            if (isset($game->relationships->original)) {
+                //do not link unlocked games or launchers.
+                // people can access them via the original games
                 continue;
             }
-            $tilePos = findTile($data['tiles'], $game->packageName);
+            $tilePos = findPackageTile($data['tiles'], $game->packageName);
             if ($tilePos === null) {
                 $tilePos = count($data['tiles']);
                 $data['tiles'][$tilePos] = buildDiscoverGameTile($game);
@@ -817,10 +925,20 @@ function addDiscoverRow(&$data, $title, $games, $ranked = false)
     $data['rows'][] = $row;
 }
 
-function findTile($tiles, $packageName)
+function findPackageTile($tiles, $packageName)
 {
     foreach ($tiles as $pos => $tile) {
-        if ($tile['package'] == $packageName) {
+        if (($tile['package'] ?? null) == $packageName) {
+            return $pos;
+        }
+    }
+    return null;
+}
+
+function findBundleTile($tiles, $bundleUuid)
+{
+    foreach ($tiles as $pos => $tile) {
+        if (($tile['uuid'] ?? null) == $bundleUuid) {
             return $pos;
         }
     }
@@ -852,7 +970,6 @@ function buildDiscoverGameTile($game)
             'uuid' => $latestRelease->uuid,
         ],
         'inAppPurchases' => $game->inAppPurchases,
-        'promotedProduct' => null,
         'premium' => $game->premium,
         'type' => 'app',
         'package' => $game->packageName,
@@ -866,6 +983,31 @@ function buildDiscoverGameTile($game)
             'average' => $game->rating->average,
         ],
         'promotedProduct' => buildProduct(getPromotedProduct($game)),
+    ];
+}
+
+function buildDiscoverBundleTile($game, $launcher)
+{
+    $promotedProduct = getPromotedProduct($game);
+
+    return [
+        'title' => $game->title . ' LB',
+        'image' => $game->discover,
+        'uuid'  => $game->launcherBundleUuid,
+        'type'  => 'details_page',
+        'url'   => 'ouya://launcher/details?page=' . $game->launcherBundleUuid,
+
+        'bundle' => [
+            'apps' => [
+                $game->packageName,
+                $launcher->packageName,
+            ],
+            'currency'      => $promotedProduct->currency ?? 'EUR',
+            'price'         => $promotedProduct->originalPrice ?? 0,
+            'contentRating' => $game->contentRating,
+            'purchased'     => true,//???
+            'purchaseUrl' => 'ouya://launcher/purchase?developer=' . $launcher->developer->uuid . '&product=' . $game->launcherBundleUuid,
+        ],
     ];
 }
 
