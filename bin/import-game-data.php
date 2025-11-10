@@ -715,7 +715,7 @@ function buildDetailsLauncherBundle(object $game, object $launcher): array
     $promotedProduct = getPromotedProduct($game);
 
     $data = [
-        'title'       => $game->title . ' LB',
+        'title'       => $game->title . ' Bundle',
         'description' => "Bundle: GameStick game + OUYA launcher\n\n"
             . $game->description,
         'muted'       => true,//???
