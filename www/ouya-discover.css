@@ -44,6 +44,7 @@ a {
 }
 
 
+/* tiles in rows */
 .tiles {
     display: flex;
     overflow-x: auto;

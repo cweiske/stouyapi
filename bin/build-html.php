@@ -57,6 +57,9 @@ function renderAllGamesList($detailsFiles, $path)
     $games = [];
     foreach ($detailsFiles as $gameDataFile) {
         $json = json_decode(file_get_contents($gameDataFile));
+        if (isset($json->bundle)) {
+            continue;
+        }
         $games[] = (object) [
             'packageName'  => basename($gameDataFile, '.json'),
             'title'        => $json->title,
@@ -116,6 +119,20 @@ function renderDiscoverFile($discoverFile, $path)
                         $tileData->url
                     ) . '.htm',
                 ];
+
+            } elseif ($tileData->type == 'details_page') {
+                //bundle
+                $section->tiles[] = (object) [
+                    'type'        => $tileData->type,
+                    'thumb'       => $tileData->image,
+                    'title'       => $tileData->title,
+                    'detailUrl'   => '../game/' . str_replace(
+                        'ouya://launcher/details?page=',
+                        '',
+                        $tileData->url
+                    ) . '.htm',
+                ];
+
             } else {
                 $section->tiles[] = (object) [
                     'type'        => $tileData->type,//discover
@@ -158,6 +175,9 @@ function renderDiscoverFile($discoverFile, $path)
 function renderGameFile($gameDataFile, $path)
 {
     $json = json_decode(file_get_contents($gameDataFile));
+    if (isset($json->bundle)) {
+        return renderBundleGameFile($gameDataFile, $path, $json);
+    }
 
     $appsDir = dirname($gameDataFile, 2) . '/apps/';
     $appsFile = $appsDir . $json->version->uuid . '.json';
@@ -200,6 +220,42 @@ function renderGameFile($gameDataFile, $path)
     }
 
     $gameTemplate = __DIR__ . '/../data/templates/game.tpl.php';
+    ob_start();
+    include $gameTemplate;
+    $html = ob_get_contents();
+    ob_end_clean();
+
+    return $html;
+}
+
+function renderBundleGameFile(string $gameDataFile, string $path, object $json): string
+{
+    $canonicalUrl = $GLOBALS['baseUrl'] . $path;
+
+    $pushUrl = $GLOBALS['pushToMyOuyaUrl']
+        . '?game=' . urlencode(basename($gameDataFile, '.json'));
+
+    foreach ($json->bundle->apps as $key => $app) {
+        $json->bundle->apps[$key]->detailUrl = str_replace(
+            'ouya://launcher/details?app=',
+            '',
+            $app->url
+        ) . '.htm';
+    }
+
+
+    $genres = array_unique(
+        array_merge(
+            ...array_column($json->bundle->apps, 'genres')
+        )
+    );
+    $navLinks = [];
+    foreach ($genres as $genreTitle) {
+        $url = '../discover/' . categoryPath($genreTitle) . '.htm';
+        $navLinks[$url] = $genreTitle;
+    }
+
+    $gameTemplate = __DIR__ . '/../data/templates/bundle.tpl.php';
     ob_start();
     include $gameTemplate;
     $html = ob_get_contents();
