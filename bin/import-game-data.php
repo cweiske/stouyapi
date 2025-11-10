@@ -616,6 +616,12 @@ function buildDetails($game, $linkDeveloperPage = false): array
     }
 
     $description = $game->description;
+    if (in_array('Launcher', $game->genres)) {
+        $description = 'Note:'
+            . ' This is only a starter app for the PlayJam GameStick game.'
+            . " The game must be installed, too.\n\n"
+            . $description;
+    }
     if (isset($game->notes) && trim($game->notes)) {
         $description = "Technical notes:\r\n" . $game->notes
             . "\r\n----\r\n"
@@ -710,7 +716,8 @@ function buildDetailsLauncherBundle(object $game, object $launcher): array
 
     $data = [
         'title'       => $game->title . ' LB',
-        'description' => "GameStick game + OUYA launcher\n\n" . $game->description,
+        'description' => "Bundle: GameStick game + OUYA launcher\n\n"
+            . $game->description,
         'muted'       => true,//???
 
         'metaData' => [
@@ -737,6 +744,10 @@ function buildDetailsLauncherBundle(object $game, object $launcher): array
             ],
             'purchaseUrl' => 'ouya://launcher/purchase?developer=' . $launcher->developer->uuid . '&product=' . $game->launcherBundleUuid,
         ],
+
+        'stouyapi' => [
+            'tileImage' => $game->discover,
+        ],
     ];
 
     return $data;
@@ -750,7 +761,7 @@ function buildDetailsLauncherBundleApp(object $game): array
     $latestRelease = $game->latestRelease;
     return [
         'gamerNumbers' => $game->players,
-        'genres'       => $game->genres,
+        'genres'       => removeLauncherGenre($game->genres),
         'url' => 'ouya://launcher/details?app=' . $game->packageName,
         'latestVersion' => [
             'versionNumber' => $latestRelease->name,
@@ -1221,6 +1232,17 @@ function isUnsupportedVideoUrl($url)
     return strpos($url, '://vimeo.com/') !== false;
 }
 
+function removeLauncherGenre(array $genres): array
+{
+    $filtered = [];
+    foreach ($genres as $genre) {
+        if ($genre != 'Launcher') {
+            $filtered[] = $genre;
+        }
+    }
+    return $filtered;
+}
+
 function removeMakeGames(array $games)
 {
     return filterByGenre($games, 'Tutorials', true);
@@ -1230,7 +1252,9 @@ function removeMakeGenres($genres)
 {
     $filtered = [];
     foreach ($genres as $genre) {
-        if ($genre != 'Tutorials' && $genre != 'Builds') {
+        if ($genre != 'Tutorials' && $genre != 'Builds'
+            && $genre != 'Launcher'
+        ) {
             $filtered[] = $genre;
         }
     }
