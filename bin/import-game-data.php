@@ -1002,7 +1002,7 @@ function buildDiscoverBundleTile($game, $launcher)
     $promotedProduct = getPromotedProduct($game);
 
     return [
-        'title' => $game->title . ' LB',
+        'title' => $game->title . ' Bundle',
         'image' => $game->discover,
         'uuid'  => $game->launcherBundleUuid,
         'type'  => 'details_page',
