@@ -211,6 +211,7 @@ foreach (str_split($searchLetters) as $letter) {
 function buildDiscover(array $games)
 {
     $games = removeMakeGames($games);
+    $games = removeLauncherGames($games);
     $data = [
         'title' => 'DISCOVER',
         'rows'  => [],
@@ -1241,6 +1242,11 @@ function removeLauncherGenre(array $genres): array
         }
     }
     return $filtered;
+}
+
+function removeLauncherGames(array $games)
+{
+    return filterByGenre($games, 'Launcher', true);
 }
 
 function removeMakeGames(array $games)
