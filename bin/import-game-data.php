@@ -341,7 +341,9 @@ function buildDiscoverCategory($name, $games)
         $data['stouyapi']['subtitle'] = $GLOBALS['categorySubtitles'][$name];
     }
 
+    $specialRows = false;
     if (count($games) >= 20) {
+        $specialRows = true;
         addDiscoverRow(
             $data, 'Last updated',
             filterLastUpdated($games, 10)
@@ -354,7 +356,18 @@ function buildDiscoverCategory($name, $games)
     }
 
     $games = sortByTitle($games);
-    $chunks = array_chunk($games, 4);
+    if ($specialRows) {
+        $chunks = array_chunk($games, 4);
+    } else {
+        //first row has large images, only 3 games are visible
+        // so only put 3 in the first row.
+        $chunks = [
+            array_slice($games, 0, 3)
+        ];
+        $games = array_slice($games, 3);
+        $chunks = array_merge($chunks, array_chunk($games, 4));
+    }
+
     $title = 'All';
     foreach ($chunks as $chunkGames) {
         addDiscoverRow($data, $title, $chunkGames);
