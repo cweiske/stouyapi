@@ -630,10 +630,14 @@ function buildDetails($game, $linkDeveloperPage = false): array
     }
 
     $iaUrl = null;
-    if (isset($game->latestRelease->url)
-        && substr($game->latestRelease->url, 0, 29) == 'https://archive.org/download/'
+    if (isset($game->latestRelease->originalUrl)
+        && str_starts_with($game->latestRelease->originalUrl, 'https://archive.org/download/')
     ) {
-        $iaUrl = dirname($game->latestRelease->url) . '/';
+        $iaUrl = str_replace(
+            'https://archive.org/download/',
+            'https://archive.org/details/',
+            dirname($game->latestRelease->originalUrl) . '/'
+        );
     }
 
     $description = $game->description;
@@ -1182,6 +1186,7 @@ function addMissingGameProperties($game)
         $medium->url = rewriteUrl($medium->url);
     }
     foreach ($game->releases as $release) {
+        $release->originalUrl = $release->url;
         $release->url = rewriteUrl($release->url);
     }
 }
