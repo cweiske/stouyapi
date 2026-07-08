@@ -190,11 +190,7 @@ function renderGameFile($gameDataFile, $path)
     );
 
     $apkDownloadUrl = $downloadJson->app->downloadLink;
-    /*
-    if (isset($json->premium) && $json->premium) {
-        $apkDownloadUrl = null;
-    }
-    */
+
     $developerDetailsUrl = null;
     if (isset($json->developer->url) && $json->developer->url) {
         $developerDetailsUrl = '../discover/' . str_replace(
