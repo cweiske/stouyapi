@@ -608,10 +608,17 @@ function buildDetails($game, $linkDeveloperPage = false): array
     }
 
     $buttons = [];
-    if (isset($game->links->unlocked)) {
+    if (isset($game->relationships->unlocked)) {
         $buttons[] = [
             'text' => 'Show unlocked',
-            'url'  => 'ouya://launcher/details?app=' . $game->links->unlocked,
+            'url'  => 'ouya://launcher/details?app=' . $game->relationships->unlocked,
+            'bold' => true,
+        ];
+    }
+    if (isset($game->relationships->fixed)) {
+        $buttons[] = [
+            'text' => 'Show fixed version',
+            'url'  => 'ouya://launcher/details?app=' . $game->relationships->fixed,
             'bold' => true,
         ];
     }
