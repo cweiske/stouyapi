@@ -200,6 +200,20 @@ function renderGameFile($gameDataFile, $path)
         ) . '.htm';
     }
 
+    $buttons = [];
+    foreach ($json->buttons ?? [] as $buttonDetails) {
+        if (str_starts_with($buttonDetails->url, 'ouya://launcher/details?app=')) {
+            $buttons[] = (object) [
+                'text' => $buttonDetails->text,
+                'url'  => str_replace(
+                    'ouya://launcher/details?app=',
+                    '',
+                    $buttonDetails->url
+                ) . '.htm',
+            ];
+        }
+    }
+
     $internetArchiveUrl = $json->stouyapi->{'internet-archive'} ?? null;
     $developerUrl       = $json->stouyapi->{'developer-url'} ?? null;
     $blockedInWebText   = $json->stouyapi->blockedInWebText ?? null;

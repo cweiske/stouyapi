@@ -108,6 +108,11 @@
     <a href="<?= $appsJson->app->website ?>">Game website</a>
    </div>
    <?php endif ?>
+   <?php foreach ($buttons as $buttonDetails): ?>
+       <div>
+           <a href="<?= $buttonDetails->url ?>"><?= $buttonDetails->text ?></a>
+       </div>
+   <?php endforeach ?>
    <div>
     <form method="post" action="<?= htmlspecialchars($pushUrl) ?>" id="push" onsubmit="pushToMyOuya();return false;">
      <button name="push" type="submit" class="push-to-my-ouya">
